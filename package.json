@@ -1,0 +1,22 @@
+{
+  "name": "currencymaster",
+  "version": "0.1.0",
+  "description": "Currency bot :3",
+  "main": "Main.js",
+  "scripts": {
+    "test": "catchyou"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Trico-Everfire/.CurrencyMaster.git"
+  },
+  "author": "Trico Everfire",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Trico-Everfire/.CurrencyMaster/issues"
+  },
+  "homepage": "https://github.com/Trico-Everfire/.CurrencyMaster#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
+}
