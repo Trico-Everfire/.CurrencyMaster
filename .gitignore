@@ -1,6 +1,6 @@
 libs
 run.bat
-.gitgnore
+.gitignore
 node_modules
 shopChances
 Storage
