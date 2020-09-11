@@ -4,11 +4,11 @@
   "description": "Currency bot :3",
   "main": "Main.js",
   "scripts": {
-    "test": "catchyou"
+    "test": "node Main.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Trico-Everfire/.CurrencyMaster.git"
+    "url": "git+https://github.com/Trico-Everfire/.CurrencyMaster"
   },
   "author": "Trico Everfire",
   "license": "ISC",
@@ -17,6 +17,11 @@
   },
   "homepage": "https://github.com/Trico-Everfire/.CurrencyMaster#readme",
   "dependencies": {
-    "discord.js": "^12.2.0"
+    "canvas": "^2.6.1",
+    "deepcopy": "^2.1.0",
+    "discord.js": "^12.2.0",
+    "moment": "^2.25.3",
+    "nedb": "^1.8.0",
+    "unique-names-generator": "^4.3.1"
   }
 }

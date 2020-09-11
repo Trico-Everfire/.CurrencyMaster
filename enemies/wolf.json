@@ -1,0 +1,15 @@
+{
+    "name": "wolf",
+    "variants": [
+        {"type":"albino","spawnChance":0.2,"holidayLocked":false,"dmgModifier":1.3},
+        {"type":"alpha","spawnChance":0.18,"holidayLocked":false,"dmgModifier":1.5},
+        {"type":"rabid","spawnChance":0.13,"holidayLocked":false,"dmgModifier":1.8},
+        {"type":"undead","spawnChance":0.12,"holidayLocked":false,"dmgModifier":1.5},
+        {"type":"golden","spawnChance":0.03,"holidayLocked":false,"dmgModifier":1.2}
+    ],
+    "nocturnal":true,
+    "diurnal":true,
+    "damage":20,
+    "baseHP": 90,
+    "weapons": []
+}

@@ -1,0 +1,7 @@
+{
+    "name":"overworld",
+    "troups": ["skeleton","wolf","goblin"],
+    "type":"outdoors",
+    "benefits": ["ranged","melee"],
+    "timedaysignificance":true
+}
