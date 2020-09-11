@@ -1,4 +1,5 @@
 libs
+run.bat
 .gitgnore
 node_modules
 shopChances
