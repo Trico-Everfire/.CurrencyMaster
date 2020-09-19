@@ -1,13 +1,12 @@
 const fs = require("fs");
-// const GIF = require("GIF")
-// var myGif = GIF();
 let fantasyTownName = ["MillerVille","Timeston","Krosstoen","Limesvilles","Cherrytown","Fortaare","Kelna","Strongfair","Solime","Wolfpine","Little Ivywood","Peatsland","Haling Cove","Eastcliff","Emall","Emelle","Holden","Walden","Venzor","Roselake","Beachmarsh","Beachcastle","Butterpond","Snowbush","Fallholt","Ironhaven","Woodpine","Black Crystal","Falcon Haven","Redwick Bush","Clare View Point","Crossroads","Skystead","Everwinter","Wolfwater","Shadowfen","King's Watch","Redwater","Dragontail","Mournstead","Lunaris","Solaris","Aynor","Naporia","Onryx","Aria","Aerilon ","Aquarin ","Aramoor ","Azmar ","Begger's Hole ","Black Hollow ","Blue Field ","Briar Glen ","Brickelwhyte ","Broken Shield ","Boatwright ","Bullmar ","Carran ","City of Fire ","Coalfell ","Cullfield ","Darkwell ","Deathfall ","Doonatel ","Dry Gulch ","Easthaven ","Ecrin ","Erast ","Far Water ","Firebend ","Fool's March ","Frostford ","Goldcrest ","Goldenleaf ","Greenflower ","Garen's Well ","Haran ","Hillfar ","Hogsfeet ","Hollyhead ","Hull ","Hwen ","Icemeet ","Ironforge ","Irragin ","Jarren's Outpost ","Jongvale ","Kara's Vale ","Knife's Edge ","Lakeshore ","Leeside ","Lullin ","Marren's Eve ","Millstone ","Moonbright ","Mountmend ","Nearon ","New Cresthill ","Northpass ","Nuxvar ","Oakheart ","Oar's Rest ","Old Ashton ","Orrinshire ","Ozryn ","Pavv ","Pella's Wish ","Pinnella Pass ","Pran ","Quan Ma ","Queenstown ","Ramshorn ","Red Hawk ","Rivermouth ","Saker Keep ","Seameet ","Ship's Haven ","Silverkeep ","South Warren ","Snake's Canyon ","Snowmelt ","Squall's End ","Swordbreak ","Tarrin ","Three Streams ","Trudid ","Ubbin Falls ","Ula'ree ","Veritas ","Violl's Garden ","Wavemeet ","Whiteridge ","Willowdale ","Windrip ","Wintervale ","Wellspring ","Westwend ","Wolfden ","Xynnar ","Yarrin ","Yellowseed ","Zeffari ","Ormkirk","Dunwich","Anghor Thom","Anghor Wat","Kamouraska","Astrakhan","Arkkukari","Arkala","Halivaara","Hammaslahti","Hankala","Elinmylly","Erstonia","Cappadocia","Grimsby","Aberystwyth","Aberdyfi ","Aberdeen ","Aberuthven","Accrington","Acomb","Acton","Matlock","Glanyrafon","Armagh","Ardglass","Aston","Auchendinny","Auchenshuggle","Achnasheen","Auchtermuchty","Auchterarder","Exeter","Axminster","Westray","Lundy","Orkney","Ballachulish","Balerno","Ballymena","Ballinamallard","Ballater","Balmoral","Holbeck","Beckinsale","Troutbeck","Beckton","Bexley","Blencathra","Blencogo","Blaenau","Ffestiniog","Leurbost","Bournemouth","Eastbourne","Ashbourne","Blackburn","Bannockburn","Bradford","Bredon","Aylesbury","Dewsbury","Bury","Middlesbrough","Edinburgh","Bamburgh","Peterborough","Jedburgh","Grimsby","Tenby","Kincardine","Cardended","Lancaster","Doncaster","Gloucester","Caister","Worcester","Chester","Cirencester","Colchester","Caerdydd","Caerleon","Carlisle","Caerfyrddin","Chepstow","Barcombe","Farncombe","Ilfracombe","Coombe","Ascot","Draycott","Swadlincote","Culcheth","Cumdivock","Dalry","Dalmellington","Airedale","Rochdale","Saxondale","Croydon","Horndean","Todmorden","Abingdon","Bredon","Willesden","Drumchapel","Drumnacanvy","Drumnadrochit","Dundee","Dumbarton","Dungannon","Romsey","Athelney","Ely","Hornsey","Sheffield","Wakefield","Mansfield","Macclesfield","Mirfield","Chesterfield","Murrayfield","Findochty","Holmfirth","Burrafirth","Bradford","Ampleforth","Watford","Fanfoss","Aysgarth","Gillamoor","Garrigill","Rutherglen","Glenarm","Guthram","Rotherham","Newham","Tottenham","Oldham","Newsham","Faversham","Rotherhithe","Hythe","Erith","Holmfirth","Hempholme","Woolhope","Glossop","Howe","Norfolk","Dewhurst","Woodhurst","Spalding","Lockinge","Inverness","Keld","Threlkeld","Penketh","Culcheth","Kilmarnock","Kilead","Kilkenny","Kincardine","Kinallen","Coningsby","Kirkwall","Ormskirk","Colkirk","Falkirk","Lanteglos","Lhanbryde","Lanercost","Llanybydder","Langdale","Tow","Lewes","Barnsley","Hadleigh","Lindow","Llyn","Lingmell","Appleby","Wigston","Windermere","Grasmere","Cromer","Tranmere","Wimborne","Mossley","Bournemouth","Portsmouth","Monmouth","Nancledra","Nantgarw","Nantwich","Skegness","Furness","Norton","Norbury","Norwich","Pantmawr","Penzance","Pendle","Penrith","Putlochry","Pitmedden","Polperro","Poltragow","Pontypridd","Pontheugh","Hartlepool","Blackpool","Porthcawl","Porthaethwy","Davenport","Penshaw","Openshaw","Shepshed","Shipton","Stanmore","Stamford","Stanlow","Hampstead","Berkhamsted","Lybster","Scrabster","Damerel","Padstow","Strathmore","Streatham","Sudbury","Sutton","Swindon","Swinford","Cleethorpes","Thorpeness","Huthwaite","Tregaron","Travercraig","Tillicoultry","Tillydrone","Lowestoft","Tywardreath","Tunstead","Warrington","Coniston","Clacton","Everton","Broughton","Luton","Merton","Stratford","Wealdstone","Southwold","Norwich","Alnwick","Bromwich","Runswick","Lerwick","Wheldrake","Wimborne","Tamworth","Farnworth","Holsworthy","Bredwardine","Orilon ","Aquarine ","Aramore","Azmarin ","Beggar's Hole ","Black Hallows","Briar Glen ","Bracklewhyte","Bellmare ","Cirrane ","Caelfall ","Crullfeld ","Murkwell","Durnatel","Easthallow ","Acrine ","Erostey","Forstford ","Goulcrest ","Hirane","Hillford ","Ilragorn","Leefside","Mirstone ","Nerton","Aroonshire ","Alryne","Pirn","Torrine","Tardide ","Veritas","Whitebridge ","Wallowdale ","Wolford","Yarlford","Zalfari ","Urmkirkey","Dornwich","Kameeraska","Astrakane","Archmouth","Arkaley","Aelinmiley","Myrefall","Garmsby","Aberstwyth","Alderdyfi ","Alderrdeen ","Aeberuthey","Accreton","Alcombey","Arcton","Martslock","Glarnyraefon","Aermagh","Aeston","Auchendale","Archensheen","Auctermunty","Aucteraden","Arkmunster","Arkney","Bellechulish","Baerney","Bailymena","Ballingsmallard","Ballaeter","Bellmoral","Hullbeck","Beckinsdale","Troutberk","Berkton","Berxley","Blancathey","Blencalgo","Bellenau","Larcbost","Fournemouth","Eastborne","Ashborne","Bleakburn","Banrockburn","Bradfordshire","Braedon","Islesbury","Dawsbury","Middlesborough","Edinborourgh","Bamborourgh","Peterbrugh","Jedborourgh","Gramsby","Taernsby","Kingcardine","Cardend","Laencaster","Duncaster","Glanchester","Warcester","Sirencester","Calchester","Caershire","Carleone","Chaepstow","Barncombe","Ferncombe","Ilfreycombe","Graycott","Swindlincote","Calcheth","Cewmann","Dalelry","Dalmerlington","Aeredale","Rachdale","Craydon","Haerndean","Taedmorden","Arbington","Braedon","Willsden","Durmchapel","Domburton","Dangarnon","Gormsey","Aethelney","Eelry","Harnsey","Sherfield","Hardersfield","Waekefield","Mensfield","Marclesfield","Mirefield","Cesterfield","Murlayfield","Addersfield","Ferndochty","Helmfirth","Burrafirth","Bardford","Aempleforth","Warthford","Farnfoss","Iyesgarth","Gilramore","Garigill","Rptherglen","Glaenarm","Garthram","Ruthorham","Eldham","Favorsham","Ritherhithe","Ayrith","Helmfirth","Foolshope","Galssop","Hewe","Narfolk","Dalhurst","Woodhaerst","Larkinge","Eanverness","Kald","Thralkeld","Penkurth","Calcherth","Calmarnock","Kilerth","Kinecardine","Kineallen","Carningsby","Kirekwall","Armskirk","Caelkirk","Fallkirk","Laenteglos","Lhanbyrde","Lanercoast","Llaneybyder","Longdale","Taewe","Laewaes","Burnsley","Haedleigh","Landow","Llyne","Linemell","Wingston","Wandermere","Crasmere","Cromerth","Transmere","Wombourne","Moressley","Barnemouth","Paethsmouth","Marnmouth","Narnclaedra","Nantgarth","Narthwich","Skargness","Northon","Northbury","Northwich","Paentmarwy","Paendley","Pernrith","Perthlochry","Pitmerden","Palperroth","Peltragow","Pontybridge","Hurtlepool","Blackridgepool","Porthcrawl","Porthaethwidge","Doveport","Panshaw","Perlshaw","Sharpton","Stawford","Sanlow","Harmstead","Barkamsted","Daemarrel","Pathstow","Stathmore","Stratham","Satbury","Sarton","Swindmore","Swanford","Claethorpes","Thorpes","Harthwaite","Tergaron","Tylwaerdreath","Tarnstead","Warlington","Conriston","Clarcton","Alverton","Boroughton","Larton","Malrton","Stathford","Waeldestone","Alnerwick","Barmwich","Sharnwick","Larnwick","Whaelrdrake","Wanborne","Tarmsworth","Fernsworth","Halsworthy","Braedwardith"];
 const {loadImage,createCanvas,Image} = require("canvas")
 const { uniqueNamesGenerator, names } = require('unique-names-generator');
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const deepcopy = require("deepcopy")
+const deepcopy = require("deepcopy");
 const HWDB = require("./libs/hawkwhisper").HWDB;
+const HWDBTCP = require("./libs/hawkwhisper").HAWKTCP;
 const key = require("./libs/key.json")
 const DataBase = new HWDB(["data","data2"],".TEFS",{key:key.key,oldEnc:true,publicExtensionName:true},(res)=>{})
 DataBase.newTableSync("users");
@@ -16,7 +15,7 @@ DataBase.newTableSync("servers");
 DataBase.newTableSync("NPCS");
 DataBase.newTableSync("autoINC");
 DataBase.newTableSync("ITEMS");
-
+//let DW = new HWDBTCP(25565,DataBase);
 const extName = DataBase.getExtensionName();
 
 let HAI,HOI,SHI,HYI,houseIMG,townhallIMG,mapIMG,skyMapImg,grassIMG,boulderIMG,HRC,mountainIMG;
@@ -284,8 +283,9 @@ function townNameExistsCheck(repeatAmount){
 
 class Registry{
 
-    constructor(){
+    constructor(identifier){
         this.Registry = {};
+        identifier == undefined ? this.identifier = "ID" : this.identifier = identifier;
         Object.defineProperty(this,"length",{
             get:function (){
                 let size = 0, key;
@@ -302,7 +302,7 @@ class Registry{
     }
 
     push(Item){
-        this.Registry[Item.ID] = Item;
+        this.Registry[Item[this.identifier]] = Item;
     }
 
     getRegistry(){
@@ -340,6 +340,10 @@ class itemInstance {
             console.log("you're going below acceptable quantity levels.")
             this.item.Quantity = 0;
         }
+    }
+
+    getInstance(){
+        return this.item;
     }
 
 }
@@ -385,12 +389,12 @@ class ItemRegistry {
 
 class Item {
 
-constructor (ID,Name,value){
-this.ID = ID;
-this.Name = Name;
-this.Type = "item"
-this.BaseValue = value;
-}
+    constructor (ID,Name,value){
+    this.ID = ID;
+    this.Name = Name;
+    this.Type = "item"
+    this.BaseValue = value;
+    }
     getID(){
         return this.ID;
     }
@@ -502,22 +506,121 @@ class Consumable extends Item {
     }
 }
 
-class Player {
+let itemRegistry = new ItemRegistry();
 
-    constructor(UID){
-        this.fileLoc = "UserData_"+UID+"_file";
+class DataInstancer {
+    constructor(UID,table,fileLoc){
+        this.table = table;
+        this.fileLoc = fileLoc;
         this.UID = UID;
-        let exists = Player.validUser(UID)
+        DataBase.newTableSync(this.table)
+        let exists = DataInstancer.validInstance(this.table,this.fileLoc)
         if(exists){
-            this.player = DataBase.getGuaranteedItemSync("users",this.fileLoc).result[1];
+            this.dataInstance = DataBase.getGuaranteedItemSync(this.table,this.fileLoc).result[1];
         } else {
-            this.player = Player.defaultData();
-            DataBase.newItemSync("users",this.fileLoc,this.player);
+            this.dataInstance = this.defaultData();
+            DataBase.newItemSync(this.table,this.fileLoc,this.dataInstance);
         }
         
     }
 
-    static defaultData(){
+    static validInstance(table,fileLoc){
+        if(fileLoc.includes(extName)) fileLoc = fileLoc.replace(extName,"")
+        return DataBase.viewItemsSync(table,0).val.includes(fileLoc+extName);
+    }
+
+    defaultData(){
+        return {}
+    }
+
+    saveData(data){
+        this.dataInstance = data;
+        DataBase.newItemSync(this.table,this.fileLoc,this.dataInstance);
+    }
+
+    getData(){
+        return this.dataInstance
+    }
+
+}
+class enemyRegister extends Registry{
+
+    constructor() {
+        super()
+    }
+
+    push(Item){
+        this.Registry[Item.name] = Item;
+    }
+
+}
+class EnemyRegistry {
+    
+    constructor() {
+        this.enemyRegistry = new enemyRegister();
+        this.init();
+    }
+
+    init(){
+        let iRegistry = itemRegistry.getRegistry();
+        let goblin = require("./enemies/goblin.json");
+        let goblinweapon = []
+        this.registerEnemy(goblin.name,goblin.variants,goblin.damage,goblin.baseHP,goblin.nocturnal,goblin.diurnal,goblin.weapons)
+        let wolf = require("./enemies/wolf.json");
+        this.registerEnemy(wolf.name,wolf.variants,wolf.damage,wolf.baseHP,wolf.nocturnal,wolf.diurnal,wolf.weapons)
+        let skeleton = require("./enemies/skeleton.json");
+        let skeleweapons = [iRegistry.get(6),iRegistry.get(8),iRegistry.get(9)]
+        this.registerEnemy(skeleton.name,skeleton.variants,skeleton.damage,skeleton.baseHP,skeleton.nocturnal,skeleton.diurnal,skeleweapons)
+    }
+
+    registerEnemy(name,variants,damage,baseHP,nocturnal,diurnal,weapons){
+        let enemy = new Enemy(this.enemyRegistry.length,name)
+        let enemyData = enemy.getData()
+        if(enemyData.baseHP == 0){
+            enemyData.name = name;
+            enemyData.variants = variants;
+            enemyData.damage = damage;
+            enemyData.baseHP = baseHP;
+            enemyData.nocturnal = nocturnal;
+            enemyData.diurnal = diurnal;
+            enemyData.weapons = weapons;
+            enemy.saveData(enemyData);
+        }
+        this.enemyRegistry.push(enemyData)
+    }
+
+    getRegistry(){
+        return this.enemyRegistry;
+    }
+}
+class Enemy extends DataInstancer{
+
+    constructor(UID,name){
+        super(UID,"enemies","enemy_"+name+"_file");
+        this.name = name;
+        
+    }
+
+    defaultData(){
+        return {
+            "name": this.name,
+            "variants": [],
+            "damage":0,
+            "baseHP": 0,
+            "nocturnal":false,
+            "diurnal":false,
+            "weapons": []
+        }
+    }
+
+}
+class Player extends DataInstancer{
+
+    constructor(UID){
+        super(UID,"users","UserData_"+UID+"_file")
+    }
+
+    defaultData(){
        return {
             "user":this.UID,
             "data":{
@@ -541,18 +644,25 @@ class Player {
                 "transports": [],
                 "allies": [],
                 "enemies": [],
-                "party": []
+                "party": [],
+                "dmPrefix": "**"
             }
+    }
+
+    saveData(data){
+        if(data.user != this.UID) throw new Error("Not valid data save attempt."); //if this happens, something's wrong, to prevent corruption, we throw an error.
+        super.saveData(data);
     }
 
     static validateWithDefault(){
         let users = DataBase.viewItemsSync("users",0).val;
         for(let user of users){
-                user = user.replace("UserData_","").replace("_file"+extName,"")
-                if(Player.validUser(user)){
-                let userInstance = new Player(user);
-                let userData = userInstance.getData()
-                let DefaultState = Player.defaultData();
+                user = user.replace(extName,"")
+                if(DataInstancer.validInstance("users",user)){
+                let UID = user.replace("UserData_","").replace("_file","");
+                let userInstance = new Player(UID);
+                let userData = userInstance.getData();
+                let DefaultState = userInstance.defaultData();
                 let shouldUpdate = false;
                 for(let state in DefaultState){
                     if(userData[state] == undefined){
@@ -571,23 +681,82 @@ class Player {
         }
     }
 
+}
+class Server extends DataInstancer{
+
+    constructor(UID){
+        super(UID,"servers","ServerData_"+UID+"_file")
+    }
+
+
+    defaultData(){
+        return {
+            "prefix": "**"
+        }
+    }
+
     saveData(data){
-        if(data.user != this.UID) throw new Error("Not valid data save attempt."); //if this happens, something's wrong, to prevent corruption, we throw an error.
-        this.player = data;
-        DataBase.newItemSync("users",this.fileLoc,this.player);
+        if(data.prefix == undefined) throw new Error("Not valid data save attempt."); //if this happens, something's wrong, to prevent corruption, we throw an error.
+        super.saveData(data);
     }
 
-    getData(){
-        return this.player
+
+}
+
+class NPC extends DataInstancer{
+
+    constructor(id,type,race,name){
+        super(id,"NPCS",name);
+        this.type = type;
+        this.race = race;
+        this.name = name;
     }
 
-    static validUser(UID){
-      return DataBase.viewItemsSync("users",0).val.includes("UserData_"+UID+"_file"+extName);
+    defaultData(){
+        return {
+            "name": this.name,
+            "type": this.type,
+            "race": this.race,
+            "ID": this.UID
+        }
+    }
+
+    addDataToNPC(key,value){
+        this.dataInstance[key] = value
+    }
+
+    setShopParameters(){
+        this.type = "shopkeeper"
+        this.dataInstance["wares"] = []
+        this.dataInstance["made"] = 0;
+        this.dataInstance["has"] = 2000;
+    }
+
+    stockShopParameter(){
+       let NPC = this.dataInstance;
+       let coreWares = []
+       for(let i = 0; i < Math.floor(Math.random() * itemRegistry.getRegistry().length) + 4; i++){
+           let getItem = itemRegistry.getRegistry().get(Math.floor(Math.random() * (itemRegistry.getRegistry().length - 1)) + 0)
+           if(!coreWares.includes(getItem)){
+           coreWares.push(getItem)
+           let bool = Math.round(Math.random() * 1) == 1;
+           let nbv = getItem.BaseValue + (bool ? Number.parseInt(getItem.BaseValue / 24) : -Number.parseInt(getItem.BaseValue / 24));
+           getItem.BaseValue = nbv
+           getItem.Quantity = Math.floor(Math.random() * 5) + 1
+           NPC.has = Math.floor(Math.random() * 3500) + 1500
+           NPC.wares.push(getItem);
+           }
+       }
+    }
+
+    saveData(data){
+    if(data != undefined && data.race != undefined) throw new Error("Not valid data save attempt."); //if this happens, something's wrong, to prevent corruption, we throw an error.
+    super.saveData(data)
     }
 
 }
 
-let itemRegistry = new ItemRegistry();
+let enemyRegistry = new EnemyRegistry();
 restockShopsOn2HourPass();
 let TOD;
 let HOD;
@@ -631,45 +800,39 @@ function tick(manual) {
         TOD = time.getHours() % 2 == 0 ? "day" : "night"
     }
 
-    if(time.getMinutes() == "00") HOD = 0; else HOD = (time.getMinutes() * 60) / 24;
-    console.log(HOD)
+    if(time.getMinutes() == "00") HOD = 0; else HOD = (12 / 60) * time.getMinutes();
 
 }
-
 function restockShopsOn2HourPass(){
       setInterval(tick, 60000);
 }
 Player.validateWithDefault();
 client.on("message",async (message)=>{
-    if(message.author.bot) return;
- //   console.log(Player.validUser(message.author.id))
-//const DataBase = new DataStore({filename:"./Storage/TE_NetworkingDB_"+message.guild.id+"_CurrencyFile.TESCF",autoload:true});
+if(message.author.bot) return;
+
 let date = new Date();
-let exists = DataBase.viewItemsSync("users",0).val.includes("UserData_"+message.author.id+"_file"+extName);
-let existsServer = false;
 let notDMS = true;
 
 if(message.channel.type === "dm"){
     notDMS = false
+}
 
-} else
-existsServer = DataBase.viewItemsSync("servers",0).val.includes("ServerData_"+message.guild.id+"_file"+extName);
+let player;
 
-let fileLoc = "UserData_"+message.author.id+"_file";
 let prefix;
-
-if(existsServer && notDMS){
-prefix = DataBase.getGuaranteedItemSync("servers","ServerData_"+message.guild.id+"_file").result[1].prefix
-} else if(notDMS){
-    DataBase.newItemSync("servers","ServerData_"+message.guild.id+"_file",{"prefix":"**"})
-    prefix = "**"
+let serverData;
+if(notDMS){
+    serverData = new Server(message.guild.id);
+    prefix = serverData.getData().prefix
 } else {
-    prefix = "**"
+    player = new Player(message.author.id);
+    prefix = player.getData().dmPrefix;
 }
 if(!message.content.startsWith(prefix)) return;
 
-let player = new Player(message.author.id);
-// console.log(player.getData())
+if(notDMS){
+   player = new Player(message.author.id);
+}
 
 let NPCS = new Registry();
 let NPCNames = DataBase.viewItemsSync("NPCS",0).val;
@@ -678,34 +841,6 @@ for(let npc of NPCNames){
     NPCS.push(DataBase.getGuaranteedItemSync("NPCS",npc).result[1])
 }
 
-// const baseData = 
-// {
-// "user":message.author.id,
-// "data":{
-//     "currency":0.00,
-//     "jobs":[],
-//     "battleSystem": {},
-//     "isWorking":false,
-//     "workEfficiency":1.00,
-//     "Skills": {
-//     "jobExperience":0.000,
-//     "animalExperience":0.000,
-//     "strength":0.000,
-//     "agility":0.000
-//     },
-//     "timeoutData":{
-//         "isTimedOut": false,
-//         "getTimeoutTimer":null
-//         }
-//     }
-// }
-
-// if(!exists){
-//     DataBase.newItemSync("users",fileLoc,baseData);
-// }
-
-const allJobs = require("./jobs.json");
-
 if(player.getData() == null){
     let trico = client.users.cache.get("105357779807535104")
     trico.send("user "+message.author.id+" has fully corrupt files and will be defaulted.\n\n" +JSON.stringify(usableData.err));
@@ -713,10 +848,8 @@ if(player.getData() == null){
     return;
 }
 
-
-
 let usableData = player.getData();
-    
+
  if(usableData.data.timeoutData.getTimeoutTimer != null && usableData.data.timeoutData.isTimedOut){
         let getDBDate2 = new Date();
         getDBDate2.setTime(usableData.data.timeoutData.getTimeoutTimer);
@@ -731,16 +864,30 @@ let usableData = player.getData();
 }
 
 let contentArray = message.content.split(" ");
+
 if(contentArray[0].toLowerCase() == prefix+"prefix")
-if(existsServer && notDMS){
+if(notDMS){
 if(contentArray.length == 2 && message.member.hasPermission("ADMINISTRATOR")){
-    DataBase.newItemSync("servers","ServerData_"+message.guild.id+"_file",{"prefix":contentArray[1]})
+    let sData = serverData.getData();
+    sData.prefix = contentArray[1];
+    serverData.saveData(sData);
     message.channel.send("New prefix "+contentArray[1])    
 } else {
     message.channel.send("Current prefix "+prefix)
 }
 } else {
-    message.channel.send("DM Prefix: "+prefix)
+    if(contentArray.length == 2){
+        if(contentArray[1] == "emptyprefix"){
+            usableData.dmPrefix = "";
+        } else {
+            usableData.dmPrefix = contentArray[1];
+        }
+        player.saveData(usableData);
+        message.channel.send("New DM prefix "+contentArray[1])    
+    } else {
+        message.channel.send("DM Prefix: "+prefix)
+    }
+
 }
 
 if(contentArray[0].toLowerCase() == prefix+"battle"){
@@ -862,11 +1009,11 @@ if(contentArray[0].toLowerCase() == prefix+"towns" || contentArray[0].toLowerCas
         }
         shop = NPCS.get(shop.owner);
         if(contentArray[3] != undefined){
-            let item = shop.wares.find(e=>e.Name.toLowerCase().replace(" ","_") == contentArray[3].toLowerCase()); //.slice(3,contentArray.length).join(" ").toLowerCase()
+            let item = shop.wares.find(e=>e.Name.toLowerCase().replace(/ /gsm,"_") == contentArray[3].toLowerCase()); //.slice(3,contentArray.length).join(" ").toLowerCase()
             let indexItem = shop.wares.indexOf(item);
             if(item != undefined){
             let qntt = (contentArray[4] != undefined && Number.isInteger(Number.parseInt(contentArray[4]))) ? Number.parseInt(contentArray[4]) : 1;
-            console.log(qntt)
+            //console.log(qntt)
             if(usableData.data.currency >= (item.BaseValue * qntt)){
                 if(shop.wares[indexItem].Quantity < qntt) return message.channel.send("this shop owner does not have enough of this item")
                 usableData.data.currency -= (item.BaseValue * qntt);
@@ -875,19 +1022,18 @@ if(contentArray[0].toLowerCase() == prefix+"towns" || contentArray[0].toLowerCas
                 if(shop.wares[indexItem].Quantity <= 0){
                     shop.wares.remove(item);
                 }
-                let boughtItem = itemRegistry.getRegistry().get(item.ID);
-                boughtItem.Quantity = qntt;
-                let getPlayerItem = usableData.inventory.find(e=>e.ID == boughtItem.ID);
+                let boughtItem = new itemInstance(item)//itemRegistry.getRegistry().get(item.ID);
+                boughtItem.setQuantity(qntt);
+                let getPlayerItem = usableData.inventory.find(e=>e.ID == boughtItem.getInstance().ID);
                 if(getPlayerItem != undefined){
                 let index = usableData.inventory.indexOf(getPlayerItem);
                 usableData.inventory[index].Quantity+=qntt;
                 } else {
-                    usableData.inventory.push(boughtItem)
+                    usableData.inventory.push(boughtItem.getInstance())
                 }
                 shop.has += (item.BaseValue * qntt);
                 shop.made += (item.BaseValue * qntt);
                 DataBase.newItemSync("NPCS",shop.name,shop);
-                //DataBase.newItemSync("users",fileLoc,usableData);
                 player.saveData(usableData)
                 message.channel.send("you bought "+qntt+" "+item.Name+" for "+(item.BaseValue * qntt) + " Gold")
             } else {
