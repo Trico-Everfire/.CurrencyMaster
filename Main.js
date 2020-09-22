@@ -195,7 +195,7 @@ function generateTown(callback){
 let canvas = createCanvas(540,540);
 let ctx = canvas.getContext("2d");
 ctx.font = "20px Morris Roman";
-let townName
+let townName;
 let houseArray = [];
 let grassArray = [];
 let featureArray = [];
@@ -255,11 +255,25 @@ let mountainArray = [];
             ctx.fillText(townName,(500/2) - townName.length,40);
             //ctx.rotate(0.1);
         // ctx.fillText("i ate 20 bagels",30,100)
-    
+        let shopOwnerNPC = new NPC(DataBase.viewItemsSync("NPCS",0).val.length,"shopkeeper","kobold",getViableNPCName())
+        shopOwnerNPC.setShopParameters();
+        shopOwnerNPC.stockShopParameter();
+        shopOwnerNPC.saveData(shopOwnerNPC.getData());
+        houseArray[Math.floor(Math.random() * (houseArray.length - 1))].owner = shopOwnerNPC.getData().ID;
+        console.log(shopOwnerNPC);
         DataBase.newItemSync("properties",townName,{townName,townImage:"./images/towns/"+townName+".png",houseInfo:houseArray,featureInfo:featureArray,grassInfo:grassArray})
         fs.writeFileSync("./images/towns/"+townName+".png",canvas.toDataURL().replace(/^data:image\/png;base64,/, ""),"base64");
         callback(townName,canvas.toBuffer());
 
+}
+
+function getViableNPCName(){
+    let name = uniqueNamesGenerator({dictionaries:[names]});
+    if(DataBase.viewItemsSync("NPCS",0).val.includes(name)){
+        return getViableNPCName();
+    }
+    console.log(name);
+    return name;
 }
 
 function townNameExistsCheck(repeatAmount){
@@ -506,13 +520,22 @@ class Consumable extends Item {
     }
 }
 
+class spell extends Item {
+    constructor(id,name,value) {
+        super(id,name,value);
+    }
+}
+
 let itemRegistry = new ItemRegistry();
 
 class DataInstancer {
-    constructor(UID,table,fileLoc){
+    constructor(UID,table,fileLoc,type,race){
         this.table = table;
         this.fileLoc = fileLoc;
         this.UID = UID;
+        this.type = type;
+        this.race = race;
+        this.name = fileLoc;
         DataBase.newTableSync(this.table)
         let exists = DataInstancer.validInstance(this.table,this.fileLoc)
         if(exists){
@@ -534,8 +557,13 @@ class DataInstancer {
     }
 
     saveData(data){
-        this.dataInstance = data;
-        DataBase.newItemSync(this.table,this.fileLoc,this.dataInstance);
+        if(data == undefined){
+            DataBase.newItemSync(this.table,this.fileLoc,this.dataInstance);
+        } else {
+            this.dataInstance = data;
+            DataBase.newItemSync(this.table,this.fileLoc,this.dataInstance);
+        }
+
     }
 
     getData(){
@@ -702,14 +730,10 @@ class Server extends DataInstancer{
 
 
 }
-
 class NPC extends DataInstancer{
 
     constructor(id,type,race,name){
-        super(id,"NPCS",name);
-        this.type = type;
-        this.race = race;
-        this.name = name;
+        super(id,"NPCS",name,type,race);
     }
 
     defaultData(){
@@ -750,8 +774,13 @@ class NPC extends DataInstancer{
     }
 
     saveData(data){
-    if(data != undefined && data.race != undefined) throw new Error("Not valid data save attempt."); //if this happens, something's wrong, to prevent corruption, we throw an error.
-    super.saveData(data)
+        if(data == undefined){
+            super.saveData(data);
+        } else {
+            if(data.race == undefined) throw new Error("Not valid data save attempt."); //if this happens, something's wrong, to prevent corruption, we throw an error.
+            super.saveData(data);
+        }
+
     }
 
 }
@@ -840,7 +869,7 @@ for(let npc of NPCNames){
     npc = npc.replace(extName,"");
     NPCS.push(DataBase.getGuaranteedItemSync("NPCS",npc).result[1])
 }
-
+//console.log(NPCS)
 if(player.getData() == null){
     let trico = client.users.cache.get("105357779807535104")
     trico.send("user "+message.author.id+" has fully corrupt files and will be defaulted.\n\n" +JSON.stringify(usableData.err));
