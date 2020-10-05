@@ -126,18 +126,18 @@ function isInsideBoundingBox(boundingBox1,boundingBox2,boundingSize){
 
 }
 
-function isNotInsideBoundingBox(boundingBox1,boundingBox2,boundingSize){
+// function isNotInsideBoundingBox(boundingBox1,boundingBox2,boundingSize){
 
-    let bb1x = boundingBox1.x;
-    let bb1y = boundingBox1.y;
-    let bb2x = boundingBox2.x;
-    let bb2y = boundingBox2.y;
-    if(Math.abs(bb1x - bb2x) < boundingSize && Math.abs(bb1y - bb2y) < boundingSize){
-        return true;
-    }
-    return false;
+//     let bb1x = boundingBox1.x;
+//     let bb1y = boundingBox1.y;
+//     let bb2x = boundingBox2.x;
+//     let bb2y = boundingBox2.y;
+//     if(Math.abs(bb1x - bb2x) < boundingSize && Math.abs(bb1y - bb2y) < boundingSize){
+//         return true;
+//     }
+//     return false;
 
-}
+// }
 
 function regenerateTown(town,callback){
     let canvas = createCanvas(540,540);
@@ -383,7 +383,14 @@ class ItemRegistry {
         this.registerConsumable("Potion of Stamina",50,0,120);
         this.registerConsumable("Apple",10,40,50);
         this.registerConsumable("Bread",20,50,60);
-        this.registerConsumable("Steak",50,70,65);        
+        this.registerConsumable("Steak",50,70,65);   
+        this.registerSpell("Healing",100,0,1);
+        this.registerSpell("Fire Ball",120,10,1);
+        this.registerSpell("Fire Storm",120,10,1); 
+        this.registerSpell("Ice Ball",120,10,1);
+        this.registerSpell("Ice Storm",120,10,1);
+        this.registerSpell("Lightning Strike",120,10,1);
+        this.registerSpell("Lightning Storm",120,10,1);  
     }
 
     registerItem(name, value){
@@ -394,6 +401,9 @@ class ItemRegistry {
     }
     registerConsumable(name, value, HP, AP){
         this.ItemRegistry.push(new Consumable(this.ItemRegistry.length,name,value,HP,AP));
+    }
+    registerSpell(name,value,range,scope){
+        this.ItemRegistry.push(new Spell(this.ItemRegistry.length,name,value,range,scope));
     }
 
     getRegistry(){
@@ -520,9 +530,20 @@ class Consumable extends Item {
     }
 }
 
-class spell extends Item {
-    constructor(id,name,value) {
+class Spell extends Item {
+    constructor(id,name,value,range, scope) {
         super(id,name,value);
+        this.Type = "spell";
+        this.range = range;
+        this.scope = scope;
+    }
+
+    getRange(){
+        return this.range;
+    }
+
+    getScope(){
+        return this.scope;
     }
 }
 
@@ -678,7 +699,9 @@ class Player extends DataInstancer{
     }
 
     saveData(data){
+        if(data != undefined){
         if(data.user != this.UID) throw new Error("Not valid data save attempt."); //if this happens, something's wrong, to prevent corruption, we throw an error.
+        }
         super.saveData(data);
     }
 
@@ -840,14 +863,13 @@ client.on("message",async (message)=>{
 if(message.author.bot) return;
 
 let date = new Date();
-let notDMS = true;
+let notDMS = (message.channel.type === "dm");
 
-if(message.channel.type === "dm"){
-    notDMS = false
-}
+
+    
+
 
 let player;
-
 let prefix;
 let serverData;
 if(notDMS){
@@ -867,11 +889,11 @@ let NPCS = new Registry();
 let NPCNames = DataBase.viewItemsSync("NPCS",0).val;
 for(let npc of NPCNames){
     npc = npc.replace(extName,"");
-    NPCS.push(DataBase.getGuaranteedItemSync("NPCS",npc).result[1])
+    NPCS.push(DataBase.getGuaranteedItemSync("NPCS",npc).result[1]);
 }
-//console.log(NPCS)
+
 if(player.getData() == null){
-    let trico = client.users.cache.get("105357779807535104")
+    let trico = client.users.cache.get("105357779807535104");
     trico.send("user "+message.author.id+" has fully corrupt files and will be defaulted.\n\n" +JSON.stringify(usableData.err));
     message.author.dmChannel.send("your account has been corrupted, my creator has been notified and will contact you shortly.");
     return;
@@ -1081,8 +1103,9 @@ if(contentArray[0].toLowerCase() == prefix+"towns" || contentArray[0].toLowerCas
         .setDescription(`${shop.name} is the owner of a shop in ${getTown.townName}`)
         
         for(let ware of shop.wares){
+            let type = ware.Type == "item" ? "collectable" : ware.Type;
             let enchantments = ware.Enchantments != undefined && ware.Enchantments.length != 0;
-            msgEmbed.addField(ware.Name,ware.BaseValue.toString() + " Gold" + (enchantments ? ("\nEnchantments: {\n" + ware.Enchantments + "\n}") : "") + "\nQuantity: "+ware.Quantity)
+            msgEmbed.addField(ware.Name,ware.BaseValue.toString() + " Gold" + "\ntype: " + type + (enchantments ? ("\nEnchantments: {\n" + ware.Enchantments + "\n}") : "") + "\nQuantity: "+ware.Quantity)
         }
 
         message.channel.send(msgEmbed)
