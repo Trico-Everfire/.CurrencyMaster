@@ -362,6 +362,88 @@ class itemInstance {
 
 }
 
+class JobRegistry{
+    constructor() {
+        this.JobRegistry = new Registry("name");
+        this.init();
+    }
+    
+    init(){
+       this.registerJob(new Job("coalmine",0.00,20,6,"you are now working in the coal mines.",(Skills)=>true));
+       this.registerJob(new Job("woodcutter",0.12,50,8,"you are now working in the forest, chopping down trees.",(Skills)=>Skills.jobExperience >= 1));
+       this.registerJob(new Job("housemaid",0.26,100,12,"you are now working as a housemaid, going from house to house.",(Skills)=>Skills.jobExperience >= 2))
+       this.registerJob(new Job("hunter",0.40,300,16,"you are now working in the forest, hunting deer and elk for their hide and flesh.",(Skills)=>Skills.jobExperience >= 4 && Skills.animalExperience >= 2 && Skills.agility >= 1));
+       this.registerJob(new Job("farmgryphons",0.8,700,30,"you are feeding the younger gryphons and readying the adults for sale.",(Skills)=>Skills.animalExperience >= 6 && Skills.jobExperience >= 5))
+    }
+    /**
+     * 
+     * @param {Job} job 
+     */
+    registerJob(job){
+        this.JobRegistry.push(job);
+    }
+    /**
+     * @returns {Registry}
+     */
+
+    getRegistry(){return this.JobRegistry}
+
+
+}
+
+class Job {
+
+    /**
+     * @param {string} name 
+     * @param {Number} complexity 
+     * @param {Number} earnable 
+     * @param {Number} minutes 
+     * @param {string} description 
+     * @param {({
+        jobExperience: Number,
+        animalExperience:Number,
+        strength:Number,
+        agility:Number,
+        gryphonStartupPaid:boolean
+        })=>boolean} skillPredicate
+     */
+    constructor(name,complexity,earnable,minutes,description,skillPredicate) {
+        this.name = name;
+        this.complexity = complexity;
+        this.earnable = earnable;
+        this.minutes = minutes;
+        this.description = description;
+        this.skillPredicate = skillPredicate;
+    }
+
+/**
+ * 
+ * @param {Player} player 
+ * @param {Discord.Message} message 
+ */
+
+    runJobConfiguration(player, message){
+        let usableData = player.getData();
+        let thisDate = new Date();
+        
+        if(this.name != undefined){
+            if(!usableData.data.isWorking && this.skillPredicate(usableData.data.Skills)){
+                usableData.data.jobSkills[this.name] == undefined ? usableData.data.jobSkills[this.name] = 1 : null;
+                usableData.data.isWorking = true;
+                usableData.data.jobs.push({"jobtype":this.name,complexity:this.complexity,"getworkAmount":Number.parseFloat(toFixed(this.earnable*usableData.data.jobSkills[this.name],2)),"workEfficiency": Number.parseFloat((Math.random() * ((0.50 + this.complexity) - (0.15 + this.complexity)) + 0.15).toFixed(2)),"whenWorkDone":thisDate.getTime() + (((this.minutes * 60)*1000))})
+                player.saveData(usableData)
+                message.channel.send(this.description+"\n worktime: "+this.minutes+" minutes.")
+            } else if(this.skillPredicate(usableData.data.Skills)){
+                message.channel.send("you are already working.")
+            } else {
+                message.channel.send("you lack the required skill(s)")
+            }
+        }
+    }
+
+
+}
+
 class ItemRegistry {
 
     constructor(){
@@ -682,7 +764,8 @@ class Player extends DataInstancer{
                 "jobExperience":0.000,
                 "animalExperience":0.000,
                 "strength":0.000,
-                "agility":0.000
+                "agility":0.000,
+                "gryphonStartupPaid":false
                 },
                 "timeoutData":{
                     "isTimedOut": false,
@@ -859,15 +942,14 @@ function restockShopsOn2HourPass(){
       setInterval(tick, 60000);
 }
 Player.validateWithDefault();
+
+let jobRegistry = new JobRegistry();
+
 client.on("message",async (message)=>{
 if(message.author.bot) return;
 
 let date = new Date();
-let notDMS = (message.channel.type === "dm");
-
-
-    
-
+let notDMS = (message.channel.type !== "dm");
 
 let player;
 let prefix;
@@ -1370,10 +1452,27 @@ if(contentArray[0].toLowerCase() == prefix+"payday"){
         let workTime = new Date()
         workTime.setTime(getjob.whenWorkDone);
         let timeLeft = new Date(workTime.getTime() - thisTime.getTime());
-          message.channel.send("you still have: " + timeLeft.getMinutes().toString() + " left") 
+        message.channel.send("you still have: " + timeLeft.getMinutes().toString() + " minutes left") 
        }
     } else {
         message.channel.send("you are not working")
+    }
+}
+
+if(contentArray[0].toLowerCase() == prefix+"startup"){
+    if(contentArray[1] && contentArray[1].toLowerCase() == "gryphonfarmer"){
+        if(usableData.data.Skills.gryphonStartupPaid != true){
+            if(usableData.data.currency >= 20000){
+                usableData.data.Skills.gryphonStartupPaid = true;
+                usableData.data.currency -= 20000;
+                player.saveData(usableData);
+                message.channel.send("You paid the gryphon farm startup.");
+            } else {
+                message.channel.send("Insufficient Funds")
+            }
+        } else {
+               message.channel.send("You already paid for your gryphon farm startup.")
+        }
     }
 }
 
@@ -1384,81 +1483,16 @@ if(contentArray[0].toLowerCase() == prefix+"jobs"){
         Wood Cutter (Requires job Experience 1) {pays 50 per work day}
         House Maid (Requires job Experience 2) {pays 100 per work day}
         Hunter (Requires job Experience 4, animal knowledge skill of 2, agility skill of 1) {pays 300 per work day}
+        Gryphon Farmer (Requires job Experience of 5, animal knowledge skill of 6 ,20000 gold startup) {pays 700 gold per work day}
         `)
-        //Gryphon Farmer (Requires job skill of 5, animal knowledge skill of 6 ,20000 gold startup) {pays 700 gold per work day}
+        
         return
     }
-
-    if(contentArray[1] == "coalmine"){
-        if(!usableData.data.isWorking){
-            let thisDate = new Date();
-            let complexity = 0.00;
-            let earnable = 20;
-            let minutes = 6;
-            usableData.data.jobSkills[contentArray[1].toLowerCase()] == undefined ? usableData.data.jobSkills[contentArray[1].toLowerCase()] = 1 : null;
-            usableData.data.isWorking = true;
-            usableData.data.jobs.push({"jobtype":contentArray[1].toLowerCase(),complexity,"getworkAmount":Number.parseFloat(toFixed(earnable*usableData.data.jobSkills[contentArray[1].toLowerCase()],2)),"workEfficiency": Number.parseFloat((Math.random() * ((0.50 + complexity) - (0.15 + complexity)) + 0.15).toFixed(2)),"whenWorkDone":thisDate.getTime() + (((minutes * 60)*1000))})
-           // DataBase.newItemSync("users",fileLoc,usableData);
-            player.saveData(usableData)
-            message.channel.send("you are now working in the coal mines. worktime: "+minutes+" minutes.")
-        } else {
-            message.channel.send("you are already working.")
-        }
-    }
-
-    if(contentArray[1] == "woodcutting"){
-        if(!usableData.data.isWorking && usableData.data.Skills.jobExperience >= 1){
-            let thisDate = new Date();
-            let complexity = 0.12;
-            let earnable = 50;
-            let minutes = 8;
-            usableData.data.jobSkills[contentArray[1].toLowerCase()] == undefined ? usableData.data.jobSkills[contentArray[1].toLowerCase()] = 1 : null;
-            usableData.data.isWorking = true;
-            usableData.data.jobs.push({"jobtype":contentArray[1].toLowerCase(),complexity,"getworkAmount":Number.parseFloat(toFixed(earnable*usableData.data.jobSkills[contentArray[1].toLowerCase()],2)),"workEfficiency": Number.parseFloat((Math.random() * ((0.50 + complexity) - (0.15 + complexity)) + 0.15).toFixed(2)),"whenWorkDone":thisDate.getTime() + (((minutes * 60)*1000))})
-            //DataBase.newItemSync("users",fileLoc,usableData);
-            player.saveData(usableData)
-            message.channel.send("you are now working in the forest, chopping down trees. worktime: "+minutes+" minutes.")
-        } else if(usableData.data.Skills.jobExperience >= 1){
-            message.channel.send("you are already working.")
-        } else {
-            message.channel.send("you lack the required skill(s)")
-        }
-    }
-        if(contentArray[1] == "housemaid"){
-            if(!usableData.data.isWorking && usableData.data.Skills.jobExperience >= 2){
-                let thisDate = new Date();
-                let complexity = 0.26;
-                let earnable = 100;
-                let minutes = 12;
-                usableData.data.jobSkills[contentArray[1].toLowerCase()] == undefined ? usableData.data.jobSkills[contentArray[1].toLowerCase()] = 1 : null;
-                usableData.data.isWorking = true;
-                usableData.data.jobs.push({"jobtype":contentArray[1].toLowerCase(),complexity,"getworkAmount":Number.parseFloat(toFixed(earnable*usableData.data.jobSkills[contentArray[1].toLowerCase()],2)),"workEfficiency": Number.parseFloat((Math.random() * ((0.50 + complexity) - (0.15 + complexity)) + 0.15).toFixed(2)),"whenWorkDone":thisDate.getTime() + (((minutes * 60)*1000))})
-                //DataBase.newItemSync("users",fileLoc,usableData);
-                player.saveData(usableData)
-                message.channel.send("you are now working as a housemaid, going from house to house. worktime: "+minutes+" minutes.")
-            } else if(usableData.data.Skills.jobExperience >= 2){
-                message.channel.send("you are already working.")
-            } else {
-                message.channel.send("you lack the required skill(s)")
-            }
-    }
-    if(contentArray[1] == "hunter"){
-        if(!usableData.data.isWorking && usableData.data.Skills.jobExperience >= 4 && usableData.data.Skills.animalExperience >= 2 && usableData.data.Skills.agility >= 1){
-            let thisDate = new Date();
-            let complexity = 0.40;
-            let earnable = 300;
-            let minutes = 16;
-            usableData.data.jobSkills[contentArray[1].toLowerCase()] == undefined ? usableData.data.jobSkills[contentArray[1].toLowerCase()] = 1 : null;
-            usableData.data.isWorking = true;
-            usableData.data.jobs.push({"jobtype":contentArray[1].toLowerCase(),complexity,"getworkAmount":Number.parseFloat(toFixed(earnable*usableData.data.jobSkills[contentArray[1].toLowerCase()],2)),"workEfficiency": Number.parseFloat((Math.random() * ((0.50 + complexity) - (0.15 + complexity)) + 0.15).toFixed(2)),"whenWorkDone":thisDate.getTime() + (((minutes * 60)*1000))})
-           // DataBase.newItemSync("users",fileLoc,usableData);
-            player.saveData(usableData)
-            message.channel.send("you are now working in the forest, hunting deer and elk for their hide and flesh. worktime: "+minutes+" minutes.")
-        } else if(usableData.data.Skills.jobExperience >= 4 && usableData.data.Skills.animalExperience >= 2 && usableData.data.Skills.agility >= 1){
-            message.channel.send("you are already working.")
-        } else {
-            message.channel.send("you lack the required skill(s)")
-        }
+    let job = jobRegistry.getRegistry().get(contentArray[1].toLowerCase())
+    if(job){
+        job.runJobConfiguration(player,message);
+    } else {
+        message.channel.send("invalid job")
     }
     
 }
@@ -1480,6 +1514,6 @@ Array.prototype.remove = function (value) {
         this.splice(index, 1);
     }
     return this;
-  }
+}
 
 client.login(key.discordKey);
