@@ -18,9 +18,12 @@ DataBase.newTableSync("ITEMS");
 //let DW = new HWDBTCP(25565,DataBase);
 const extName = DataBase.getExtensionName();
 
-let HAI,HOI,SHI,HYI,houseIMG,townhallIMG,mapIMG,skyMapImg,grassIMG,boulderIMG,HRC,mountainIMG;
+let HAI,HOI,SHI,HYI,houseIMG,townhallIMG,mapIMG,skyMapImg,grassIMG,boulderIMG,HRC,mountainIMG,inventoryIMG;
 
 HRC = fs.readFileSync("./images/houseRuleChart.png");
+loadImage(fs.readFileSync("./images/inventory.png")).then(HI=>{
+    inventoryIMG = HI;
+});
 loadImage(fs.readFileSync("./images/grass.png")).then(HI=>{
     grassIMG = HI;
 })
@@ -189,6 +192,126 @@ function regenerateTown(town,callback){
     ctx.fillText(town.townName,(500/2) - town.townName.length,40); //redraw name.
     fs.writeFileSync(town.townImage,canvas.toDataURL().replace(/^data:image\/png;base64,/, ""),"base64");
     callback(canvas.toBuffer())
+}
+
+/**
+ * 
+ * @param {Player} Player
+ * @param {Discord.Message} message
+ * @param {(buffer:Buffer)=>void} callback 
+ */
+function loadInventorySystem(Player,message,callback){
+let canvas = createCanvas(1080,1334);
+let ctx = canvas.getContext("2d");
+let original = ctx.fillStyle;
+ctx.font = "30px Morris Roman";
+ctx.drawImage(inventoryIMG,0,0);
+ctx.fillStyle = "#ffd700"
+ctx.fillText(message.author.username,50,65,350)
+let data = Player.getData();
+let X = 50;
+let Y = 980;
+let Yoffset = 102
+let maxWith = 70
+let FE9 = 0;
+for (let item of data.inventory){
+    switch (FE9){
+        case 10:
+        case 20:
+        case 29:
+        X = X - (102 * 10);
+        break;
+    }
+    switch (FE9){
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        ctx.fillText(item.Name,X,Y, maxWith)
+        break;
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+        case 16:
+        case 17:
+        case 18:
+        case 19:
+        ctx.fillText(item.Name,X,Y + Yoffset, maxWith)
+        break;
+        case 20:
+        case 21:
+        case 22:
+        case 23:
+        case 24:
+        case 25:
+        case 26:
+        case 27:
+        case 28:
+        ctx.fillText(item.Name,X,Y + (Yoffset * 2), maxWith)
+        break;
+        case 28:
+        case 29:
+        case 30:
+        case 31:
+        case 32:
+        case 33:
+        case 34:
+        case 35:
+        case 36:
+        ctx.fillText(item.Name,X,Y + (Yoffset * 3), maxWith)
+        break;
+
+    }
+    FE9++
+    X = X + 102;
+}
+ctx.fillText(`Gold: ${data.data.currency}`,50,850,350)
+let skillSet = data.data.Skills
+let jobSet = data.data.jobSkills;
+let comboject = {...skillSet,...jobSet};
+let multiY = 0
+ctx.fillText("Skills:",500,65)
+
+
+for(let skill in comboject){
+let skillValue = comboject[skill];
+
+ctx.fillText(`${skill}: ${skillValue === true ? "yes" : skillValue === false ? "no" : (skillValue).toFixed(2)}`,500,105 + multiY)
+multiY += 30
+
+}
+if(data.data.jobs.length > 0){
+   let job = data.data.jobs[0]; 
+//    for(let jobVals in job){
+//     let jobValue = job[jobVals];
+//     ctx.fillText(`${jobVals}: ${jobValue}`,500,125 + multiY);
+//     multiY += 30
+//    }
+
+ctx.fillText(`Current Job: ${job.jobtype}`,500,125 + multiY);
+let thisTime = new Date()
+let workTime = new Date()
+workTime.setTime(job.whenWorkDone);
+let timeLeft = new Date(workTime.getTime() - thisTime.getTime());
+if(timeLeft < 0){
+    ctx.fillText(`Time Left: Done`,500,155 + multiY);
+} else 
+ctx.fillText(`Time Left: ${timeLeft.getMinutes().toString()} Minutes`,500,155 + multiY);
+}
+
+
+
+ctx.fillStyle = original;
+callback(canvas.toBuffer())
 }
 
 function generateTown(callback){
@@ -362,7 +485,7 @@ class itemInstance {
 
 }
 
-class JobRegistry{
+class JobRegistry {
     constructor() {
         this.JobRegistry = new Registry("name");
         this.init();
@@ -373,6 +496,7 @@ class JobRegistry{
        this.registerJob(new Job("woodcutter",0.12,50,8,"you are now working in the forest, chopping down trees.",(Skills)=>Skills.jobExperience >= 1));
        this.registerJob(new Job("housemaid",0.26,100,12,"you are now working as a housemaid, going from house to house.",(Skills)=>Skills.jobExperience >= 2))
        this.registerJob(new Job("hunter",0.40,300,16,"you are now working in the forest, hunting deer and elk for their hide and flesh.",(Skills)=>Skills.jobExperience >= 4 && Skills.animalExperience >= 2 && Skills.agility >= 1));
+       this.registerJob(new Job("guard",0.45,400,20,"you stand guard for a local shop owner.",(Skills)=>Skills.jobExperience >= 5 && Skills.strength == 4));
        this.registerJob(new Job("farmgryphons",0.8,700,30,"you are feeding the younger gryphons and readying the adults for sale.",(Skills)=>Skills.animalExperience >= 6 && Skills.jobExperience >= 5))
     }
     /**
@@ -399,7 +523,7 @@ class Job {
      * @param {Number} earnable 
      * @param {Number} minutes 
      * @param {string} description 
-     * @param {({
+     * @param {({}:{
         jobExperience: Number,
         animalExperience:Number,
         strength:Number,
@@ -1028,7 +1152,7 @@ if(contentArray[0].toLowerCase() == prefix+"battle"){
 }
 
 if(contentArray[0].toLowerCase() == prefix+"testdata"){
-   message.channel.send({code:"json",content:JSON.stringify(itemRegistry.getRegistry().getRegistry(),null,"\t")});
+//    message.channel.send(usableData.data);
 }
 
 if(contentArray[0].toLowerCase() == prefix+"search"){
@@ -1407,25 +1531,29 @@ if(contentArray[0].toLowerCase() == prefix+"lessons"){
 }
 
 if(contentArray[0].toLowerCase() == prefix+"me"){
-let user = usableData.data;
-let postables = new Discord.MessageEmbed()
-.setAuthor(message.author.username,message.author.avatarURL)
-.setDescription("You:")
-.addField("balance:",(user.currency).toString() + " gold")
-if(user.jobs.length > 0){
-    for(let jobs of user.jobs)
-    postables.addField("Current Job:",jobs.jobtype); 
-} else {
-    postables.addField("Current Job:","none");
-}
-postables.addField("Job Experience:","level: "+parseInt(user.Skills.jobExperience).toString()+"\n"+(getlevelPercentage(1,user.Skills.jobExperience - parseInt(user.Skills.jobExperience)).toFixed(0)+"/1000"))
-.addField("Animal Experience:","level: "+parseInt(user.Skills.animalExperience).toString()+"\n"+(getlevelPercentage(1,user.Skills.animalExperience - parseInt(user.Skills.animalExperience)).toFixed(0)+"/1000"))
-.addField("Physical Strength:","level: "+parseInt(user.Skills.strength).toString()+"\n"+(getlevelPercentage(1,user.Skills.strength - parseInt(user.Skills.strength)).toFixed(0)+"/1000"))
-.addField("Agility:","level: "+parseInt(user.Skills.agility).toString()+"\n"+(getlevelPercentage(1,user.Skills.agility - parseInt(user.Skills.agility)).toFixed(0)+"/1000"));
-for(let obj in user.jobSkills){
-    postables.addField(obj,"level: "+parseInt(user.jobSkills[obj]).toString()+"\n"+(getlevelPercentage(1,user.jobSkills[obj] - parseInt(user.jobSkills[obj])).toFixed(0)+"/1000"));
-}
-message.channel.send(postables);
+    loadInventorySystem(player,message,(buffer)=>{
+        let att = new Discord.MessageAttachment(buffer);
+        message.channel.send(att)
+    })
+// let user = usableData.data;
+// let postables = new Discord.MessageEmbed()
+// .setAuthor(message.author.username,message.author.avatarURL)
+// .setDescription("You:")
+// .addField("balance:",(user.currency).toString() + " gold")
+// if(user.jobs.length > 0){
+//     for(let jobs of user.jobs)
+//     postables.addField("Current Job:",jobs.jobtype); 
+// } else {
+//     postables.addField("Current Job:","none");
+// }
+// postables.addField("Job Experience:","level: "+parseInt(user.Skills.jobExperience).toString()+"\n"+(getlevelPercentage(1,user.Skills.jobExperience - parseInt(user.Skills.jobExperience)).toFixed(0)+"/1000"))
+// .addField("Animal Experience:","level: "+parseInt(user.Skills.animalExperience).toString()+"\n"+(getlevelPercentage(1,user.Skills.animalExperience - parseInt(user.Skills.animalExperience)).toFixed(0)+"/1000"))
+// .addField("Physical Strength:","level: "+parseInt(user.Skills.strength).toString()+"\n"+(getlevelPercentage(1,user.Skills.strength - parseInt(user.Skills.strength)).toFixed(0)+"/1000"))
+// .addField("Agility:","level: "+parseInt(user.Skills.agility).toString()+"\n"+(getlevelPercentage(1,user.Skills.agility - parseInt(user.Skills.agility)).toFixed(0)+"/1000"));
+// for(let obj in user.jobSkills){
+//     postables.addField(obj,"level: "+parseInt(user.jobSkills[obj]).toString()+"\n"+(getlevelPercentage(1,user.jobSkills[obj] - parseInt(user.jobSkills[obj])).toFixed(0)+"/1000"));
+// }
+// message.channel.send(postables);
 }
 
 if(contentArray[0].toLowerCase() == prefix+"payday"){
@@ -1460,6 +1588,12 @@ if(contentArray[0].toLowerCase() == prefix+"payday"){
 }
 
 if(contentArray[0].toLowerCase() == prefix+"startup"){
+    if(contentArray[1] == undefined){
+        message.channel.send(`
+        gryphon farmer (gryphonfarmer): 20000 gold.
+        `)
+    }
+
     if(contentArray[1] && contentArray[1].toLowerCase() == "gryphonfarmer"){
         if(usableData.data.Skills.gryphonStartupPaid != true){
             if(usableData.data.currency >= 20000){
