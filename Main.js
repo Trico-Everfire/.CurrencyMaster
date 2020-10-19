@@ -7,7 +7,8 @@ const client = new Discord.Client();
 const deepcopy = require("deepcopy");
 const HWDB = require("./libs/hawkwhisper").HWDB;
 const HWDBTCP = require("./libs/hawkwhisper").HAWKTCP;
-const key = require("./libs/key.json")
+const key = require("./libs/key.json");
+const { isObject } = require("util");
 const DataBase = new HWDB(["data","data2"],".TEFS",{key:key.key,oldEnc:true,publicExtensionName:true},(res)=>{})
 DataBase.newTableSync("users");
 DataBase.newTableSync("properties");
@@ -18,11 +19,23 @@ DataBase.newTableSync("ITEMS");
 //let DW = new HWDBTCP(25565,DataBase);
 const extName = DataBase.getExtensionName();
 
-let HAI,HOI,SHI,HYI,houseIMG,townhallIMG,mapIMG,skyMapImg,grassIMG,boulderIMG,HRC,mountainIMG,inventoryIMG;
+let HAI,HOI,SHI,HYI,houseIMG,townhallIMG,mapIMG,skyMapImg,grassIMG,boulderIMG,HRC,mountainIMG,inventoryIMG,iconBook,iconPotion,iconSword,iconChest;
 
 HRC = fs.readFileSync("./images/houseRuleChart.png");
 loadImage(fs.readFileSync("./images/inventory.png")).then(HI=>{
     inventoryIMG = HI;
+});
+loadImage(fs.readFileSync("./images/book.png")).then(HI=>{
+    iconBook = HI;
+});
+loadImage(fs.readFileSync("./images/sword.png")).then(HI=>{
+    iconSword = HI;
+});
+loadImage(fs.readFileSync("./images/potion.png")).then(HI=>{
+    iconPotion = HI;
+});
+loadImage(fs.readFileSync("./images/chest.png")).then(HI=>{
+    iconChest = HI;
 });
 loadImage(fs.readFileSync("./images/grass.png")).then(HI=>{
     grassIMG = HI;
@@ -204,17 +217,19 @@ function loadInventorySystem(Player,message,callback){
 let canvas = createCanvas(1080,1334);
 let ctx = canvas.getContext("2d");
 let original = ctx.fillStyle;
-ctx.font = "30px Morris Roman";
+ctx.font = "30px sans-serif";
 ctx.drawImage(inventoryIMG,0,0);
 ctx.fillStyle = "#ffd700"
 ctx.fillText(message.author.username,50,65,350)
 let data = Player.getData();
 let X = 50;
 let Y = 980;
-let Yoffset = 102
-let maxWith = 70
+let Yoffset = 102;
+let maxWith = 70;
 let FE9 = 0;
+let icons = {item:iconChest,weapon:iconSword,spell:iconBook,consumable:iconPotion}
 for (let item of data.inventory){
+
     switch (FE9){
         case 10:
         case 20:
@@ -222,6 +237,8 @@ for (let item of data.inventory){
         X = X - (102 * 10);
         break;
     }
+
+    let YIconOffset = Y - 80
     switch (FE9){
         case 0:
         case 1:
@@ -233,7 +250,9 @@ for (let item of data.inventory){
         case 7:
         case 8:
         case 9:
-        ctx.fillText(item.Name,X,Y, maxWith)
+        ctx.drawImage(icons[item.Type],X,YIconOffset);
+        ctx.fillText(item.Quantity,X- 10,YIconOffset + 20);
+        ctx.fillText(item.Name,X,Y, maxWith);
         break;
         case 10:
         case 11:
@@ -245,7 +264,9 @@ for (let item of data.inventory){
         case 17:
         case 18:
         case 19:
-        ctx.fillText(item.Name,X,Y + Yoffset, maxWith)
+        ctx.drawImage(icons[item.Type],X,YIconOffset + Yoffset);
+        ctx.fillText(item.Quantity,X- 10,YIconOffset + (Yoffset + 20));
+        ctx.fillText(item.Name,X,Y + Yoffset, maxWith);
         break;
         case 20:
         case 21:
@@ -256,10 +277,11 @@ for (let item of data.inventory){
         case 26:
         case 27:
         case 28:
-        ctx.fillText(item.Name,X,Y + (Yoffset * 2), maxWith)
-        break;
-        case 28:
         case 29:
+        ctx.drawImage(icons[item.Type],X,YIconOffset + (Yoffset * 2));
+        ctx.fillText(item.Quantity,X- 10,YIconOffset + ((Yoffset * 2) + 20));
+        ctx.fillText(item.Name,X,Y + (Yoffset * 2), maxWith);
+        break;
         case 30:
         case 31:
         case 32:
@@ -267,15 +289,19 @@ for (let item of data.inventory){
         case 34:
         case 35:
         case 36:
-        ctx.fillText(item.Name,X,Y + (Yoffset * 3), maxWith)
+        case 37:
+        case 38:
+        case 39:
+        ctx.drawImage(icons[item.Type],X,YIconOffset + (Yoffset * 3));
+        ctx.fillText(item.Quantity,X - 10,YIconOffset + ((Yoffset * 3) + 20));
+        ctx.fillText(item.Name,X,Y + (Yoffset * 3), maxWith);
         break;
-
     }
     FE9++
     X = X + 102;
 }
-ctx.fillText(`Gold: ${data.data.currency}`,50,850,350)
-let skillSet = data.data.Skills
+ctx.fillText(`Gold: ${data.data.currency}`,50,850,350);
+let skillSet = data.data.Skills;
 let jobSet = data.data.jobSkills;
 let comboject = {...skillSet,...jobSet};
 let multiY = 0
@@ -284,10 +310,8 @@ ctx.fillText("Skills:",500,65)
 
 for(let skill in comboject){
 let skillValue = comboject[skill];
-
 ctx.fillText(`${skill}: ${skillValue === true ? "yes" : skillValue === false ? "no" : (skillValue).toFixed(2)}`,500,105 + multiY)
 multiY += 30
-
 }
 if(data.data.jobs.length > 0){
    let job = data.data.jobs[0]; 
@@ -549,7 +573,7 @@ class Job {
     runJobConfiguration(player, message){
         let usableData = player.getData();
         let thisDate = new Date();
-        
+      //  console.log(usableData)
         if(this.name != undefined){
             if(!usableData.data.isWorking && this.skillPredicate(usableData.data.Skills)){
                 usableData.data.jobSkills[this.name] == undefined ? usableData.data.jobSkills[this.name] = 1 : null;
@@ -596,7 +620,8 @@ class ItemRegistry {
         this.registerSpell("Ice Ball",120,10,1);
         this.registerSpell("Ice Storm",120,10,1);
         this.registerSpell("Lightning Strike",120,10,1);
-        this.registerSpell("Lightning Storm",120,10,1);  
+        this.registerSpell("Lightning Storm",120,10,1);
+
     }
 
     registerItem(name, value){
@@ -798,49 +823,95 @@ class DataInstancer {
     }
 
 }
-class enemyRegister extends Registry{
 
-    constructor() {
-        super()
-    }
-
-    push(Item){
-        this.Registry[Item.name] = Item;
-    }
-
-}
 class EnemyRegistry {
     
     constructor() {
-        this.enemyRegistry = new enemyRegister();
+        this.enemyRegistry = new Registry("name");
         this.init();
     }
 
     init(){
         let iRegistry = itemRegistry.getRegistry();
-        let goblin = require("./enemies/goblin.json");
-        let goblinweapon = []
-        this.registerEnemy(goblin.name,goblin.variants,goblin.damage,goblin.baseHP,goblin.nocturnal,goblin.diurnal,goblin.weapons)
-        let wolf = require("./enemies/wolf.json");
-        this.registerEnemy(wolf.name,wolf.variants,wolf.damage,wolf.baseHP,wolf.nocturnal,wolf.diurnal,wolf.weapons)
-        let skeleton = require("./enemies/skeleton.json");
+        // let goblin = require("./enemies/goblin.json");
+        // let goblinweapon = []
+      //  this.registerEnemy(goblin.name,goblin.variants,goblin.damage,goblin.baseHP,goblin.nocturnal,goblin.diurnal,goblin.weapons)
+      //  let wolf = require("./enemies/wolf.json");
+      //  this.registerEnemy(wolf.name,wolf.variants,wolf.damage,wolf.baseHP,wolf.nocturnal,wolf.diurnal,wolf.weapons)
+        let skeletonVariants =  [
+            {
+                "type": "cave",
+                "spawnChance": 0.2,
+                "holidayLocked": false,
+                "dmgModifier": 1.3
+            },
+            {
+                "type": "ancient",
+                "spawnChance": 0.18,
+                "holidayLocked": false,
+                "dmgModifier": 1.5
+            },
+            {
+                "type": "cursed",
+                "spawnChance": 0.13,
+                "holidayLocked": false,
+                "dmgModifier": 1.8
+            },
+            {
+                "type": "spooky scary",
+                "spawnChance": 0.1,
+                "holidayLocked": "halloween",
+                "dmgModifier": 1.5
+            },
+            {
+                "type": "golden",
+                "spawnChance": 0.03,
+                "holidayLocked": false,
+                "dmgModifier": 1.2
+            }
+        ]
+      a =  {	"damage": 20,
+        "baseHP": 100,
+        "nocturnal": true,
+        "diurnal": false,
+        "weapons": [
+            {
+                "weapon": "dagger",
+                "dmgModifier": 1.2,
+                "range": 0.1,
+                "type": "melee"
+            },
+            {
+                "weapon": "sword",
+                "dmgModifier": 1.4,
+                "range": 0.3,
+                "type": "melee"
+            },
+            {
+                "weapon": "spear",
+                "dmgModifier": 1.5,
+                "range": 0.5,
+                "type": "melee"
+            },
+            {
+                "weapon": "bow",
+                "dmgModifier": 1.3,
+                "range": 1.2,
+                "type": "ranged"
+            },
+            {
+                "weapon": "trumbone",
+                "dmgModifier": 1.6,
+                "range": 1,
+                "type": "magic"
+            }
+        ]}
         let skeleweapons = [iRegistry.get(6),iRegistry.get(8),iRegistry.get(9)]
-        this.registerEnemy(skeleton.name,skeleton.variants,skeleton.damage,skeleton.baseHP,skeleton.nocturnal,skeleton.diurnal,skeleweapons)
+        this.registerEnemy("skeleton",skeletonVariants,20,100,true,false,skeleweapons)
     }
 
     registerEnemy(name,variants,damage,baseHP,nocturnal,diurnal,weapons){
         let enemy = new Enemy(this.enemyRegistry.length,name)
-        let enemyData = enemy.getData()
-        if(enemyData.baseHP == 0){
-            enemyData.name = name;
-            enemyData.variants = variants;
-            enemyData.damage = damage;
-            enemyData.baseHP = baseHP;
-            enemyData.nocturnal = nocturnal;
-            enemyData.diurnal = diurnal;
-            enemyData.weapons = weapons;
-            enemy.saveData(enemyData);
-        }
         this.enemyRegistry.push(enemyData)
     }
 
@@ -869,6 +940,12 @@ class Enemy extends DataInstancer{
     }
 
 }
+class EnemyAIInstance{
+
+    constructor(entity) {
+        
+    }
+}
 class Player extends DataInstancer{
 
     constructor(UID){
@@ -884,6 +961,7 @@ class Player extends DataInstancer{
                 "battleSystem": {},
                 "isWorking":false,
                 "workEfficiency":1.00,
+                "jobSkills": {},
                 "Skills": {
                 "jobExperience":0.000,
                 "animalExperience":0.000,
@@ -920,17 +998,15 @@ class Player extends DataInstancer{
                 let UID = user.replace("UserData_","").replace("_file","");
                 let userInstance = new Player(UID);
                 let userData = userInstance.getData();
+              //  console.log("before update",userData.data)
                 let DefaultState = userInstance.defaultData();
                 let shouldUpdate = false;
-                for(let state in DefaultState){
-                    if(userData[state] == undefined){
-                        userData[state] = DefaultState[state];
-                        shouldUpdate = true;
-                    }
-                }
+                let result = checkInstanceDefaults(userData,DefaultState)
+                shouldUpdate = result.shouldUpdate;
+
                 if(shouldUpdate){
                     console.log("new Update")
-                    userInstance.saveData(userData);
+                    userInstance.saveData(result.userData);
                 }
             } else {
                 console.log("invalid user",user)
@@ -940,6 +1016,27 @@ class Player extends DataInstancer{
     }
 
 }
+
+function checkInstanceDefaults(userData,DefaultState){
+    let shouldUpdate = false;
+    for(let state in DefaultState){
+        if(userData[state] === undefined){
+            console.log(userData[state])
+            userData[state] = DefaultState[state];
+            shouldUpdate = true;
+        }
+        if(isObject(DefaultState[state])){
+            let objectified = checkInstanceDefaults(userData[state],DefaultState[state])
+            if(objectified.shouldUpdate){
+                shouldUpdate = objectified.shouldUpdate;
+               // console.log("state",state,objectified.userData)
+                userData[state] = objectified.userData;
+            }
+        }
+    }
+    return {shouldUpdate,userData};
+}
+
 class Server extends DataInstancer{
 
     constructor(UID){
@@ -1014,8 +1111,21 @@ class NPC extends DataInstancer{
     }
 
 }
+class NPCRegistry {
 
-let enemyRegistry = new EnemyRegistry();
+    constructor() {
+        this.NPCS = new Registry();
+    }
+
+    init(){
+        let NPCNames = DataBase.viewItemsSync("NPCS",0).val;
+        for(let npc of NPCNames){
+            npc = npc.replace(extName,"");
+            this.NPCS.push(DataBase.getGuaranteedItemSync("NPCS",npc).result[1]);
+        }
+    }
+}
+//let enemyRegistry = new EnemyRegistry();
 restockShopsOn2HourPass();
 let TOD;
 let HOD;
@@ -1070,7 +1180,7 @@ Player.validateWithDefault();
 let jobRegistry = new JobRegistry();
 
 client.on("message",async (message)=>{
-if(message.author.bot) return;
+if(message.author.bot && message.author.id != "604792661198635195") return;
 
 let date = new Date();
 let notDMS = (message.channel.type !== "dm");
@@ -1152,7 +1262,8 @@ if(contentArray[0].toLowerCase() == prefix+"battle"){
 }
 
 if(contentArray[0].toLowerCase() == prefix+"testdata"){
-//    message.channel.send(usableData.data);
+   // message.channel.send(jobRegistry.getRegistry().get("coalmine"));
+    // console.log(jobRegistry.getRegistry().get("hunter"))
 }
 
 if(contentArray[0].toLowerCase() == prefix+"search"){
