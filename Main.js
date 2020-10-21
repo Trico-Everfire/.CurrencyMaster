@@ -1,6 +1,6 @@
 const fs = require("fs");
 let fantasyTownName = ["MillerVille","Timeston","Krosstoen","Limesvilles","Cherrytown","Fortaare","Kelna","Strongfair","Solime","Wolfpine","Little Ivywood","Peatsland","Haling Cove","Eastcliff","Emall","Emelle","Holden","Walden","Venzor","Roselake","Beachmarsh","Beachcastle","Butterpond","Snowbush","Fallholt","Ironhaven","Woodpine","Black Crystal","Falcon Haven","Redwick Bush","Clare View Point","Crossroads","Skystead","Everwinter","Wolfwater","Shadowfen","King's Watch","Redwater","Dragontail","Mournstead","Lunaris","Solaris","Aynor","Naporia","Onryx","Aria","Aerilon ","Aquarin ","Aramoor ","Azmar ","Begger's Hole ","Black Hollow ","Blue Field ","Briar Glen ","Brickelwhyte ","Broken Shield ","Boatwright ","Bullmar ","Carran ","City of Fire ","Coalfell ","Cullfield ","Darkwell ","Deathfall ","Doonatel ","Dry Gulch ","Easthaven ","Ecrin ","Erast ","Far Water ","Firebend ","Fool's March ","Frostford ","Goldcrest ","Goldenleaf ","Greenflower ","Garen's Well ","Haran ","Hillfar ","Hogsfeet ","Hollyhead ","Hull ","Hwen ","Icemeet ","Ironforge ","Irragin ","Jarren's Outpost ","Jongvale ","Kara's Vale ","Knife's Edge ","Lakeshore ","Leeside ","Lullin ","Marren's Eve ","Millstone ","Moonbright ","Mountmend ","Nearon ","New Cresthill ","Northpass ","Nuxvar ","Oakheart ","Oar's Rest ","Old Ashton ","Orrinshire ","Ozryn ","Pavv ","Pella's Wish ","Pinnella Pass ","Pran ","Quan Ma ","Queenstown ","Ramshorn ","Red Hawk ","Rivermouth ","Saker Keep ","Seameet ","Ship's Haven ","Silverkeep ","South Warren ","Snake's Canyon ","Snowmelt ","Squall's End ","Swordbreak ","Tarrin ","Three Streams ","Trudid ","Ubbin Falls ","Ula'ree ","Veritas ","Violl's Garden ","Wavemeet ","Whiteridge ","Willowdale ","Windrip ","Wintervale ","Wellspring ","Westwend ","Wolfden ","Xynnar ","Yarrin ","Yellowseed ","Zeffari ","Ormkirk","Dunwich","Anghor Thom","Anghor Wat","Kamouraska","Astrakhan","Arkkukari","Arkala","Halivaara","Hammaslahti","Hankala","Elinmylly","Erstonia","Cappadocia","Grimsby","Aberystwyth","Aberdyfi ","Aberdeen ","Aberuthven","Accrington","Acomb","Acton","Matlock","Glanyrafon","Armagh","Ardglass","Aston","Auchendinny","Auchenshuggle","Achnasheen","Auchtermuchty","Auchterarder","Exeter","Axminster","Westray","Lundy","Orkney","Ballachulish","Balerno","Ballymena","Ballinamallard","Ballater","Balmoral","Holbeck","Beckinsale","Troutbeck","Beckton","Bexley","Blencathra","Blencogo","Blaenau","Ffestiniog","Leurbost","Bournemouth","Eastbourne","Ashbourne","Blackburn","Bannockburn","Bradford","Bredon","Aylesbury","Dewsbury","Bury","Middlesbrough","Edinburgh","Bamburgh","Peterborough","Jedburgh","Grimsby","Tenby","Kincardine","Cardended","Lancaster","Doncaster","Gloucester","Caister","Worcester","Chester","Cirencester","Colchester","Caerdydd","Caerleon","Carlisle","Caerfyrddin","Chepstow","Barcombe","Farncombe","Ilfracombe","Coombe","Ascot","Draycott","Swadlincote","Culcheth","Cumdivock","Dalry","Dalmellington","Airedale","Rochdale","Saxondale","Croydon","Horndean","Todmorden","Abingdon","Bredon","Willesden","Drumchapel","Drumnacanvy","Drumnadrochit","Dundee","Dumbarton","Dungannon","Romsey","Athelney","Ely","Hornsey","Sheffield","Wakefield","Mansfield","Macclesfield","Mirfield","Chesterfield","Murrayfield","Findochty","Holmfirth","Burrafirth","Bradford","Ampleforth","Watford","Fanfoss","Aysgarth","Gillamoor","Garrigill","Rutherglen","Glenarm","Guthram","Rotherham","Newham","Tottenham","Oldham","Newsham","Faversham","Rotherhithe","Hythe","Erith","Holmfirth","Hempholme","Woolhope","Glossop","Howe","Norfolk","Dewhurst","Woodhurst","Spalding","Lockinge","Inverness","Keld","Threlkeld","Penketh","Culcheth","Kilmarnock","Kilead","Kilkenny","Kincardine","Kinallen","Coningsby","Kirkwall","Ormskirk","Colkirk","Falkirk","Lanteglos","Lhanbryde","Lanercost","Llanybydder","Langdale","Tow","Lewes","Barnsley","Hadleigh","Lindow","Llyn","Lingmell","Appleby","Wigston","Windermere","Grasmere","Cromer","Tranmere","Wimborne","Mossley","Bournemouth","Portsmouth","Monmouth","Nancledra","Nantgarw","Nantwich","Skegness","Furness","Norton","Norbury","Norwich","Pantmawr","Penzance","Pendle","Penrith","Putlochry","Pitmedden","Polperro","Poltragow","Pontypridd","Pontheugh","Hartlepool","Blackpool","Porthcawl","Porthaethwy","Davenport","Penshaw","Openshaw","Shepshed","Shipton","Stanmore","Stamford","Stanlow","Hampstead","Berkhamsted","Lybster","Scrabster","Damerel","Padstow","Strathmore","Streatham","Sudbury","Sutton","Swindon","Swinford","Cleethorpes","Thorpeness","Huthwaite","Tregaron","Travercraig","Tillicoultry","Tillydrone","Lowestoft","Tywardreath","Tunstead","Warrington","Coniston","Clacton","Everton","Broughton","Luton","Merton","Stratford","Wealdstone","Southwold","Norwich","Alnwick","Bromwich","Runswick","Lerwick","Wheldrake","Wimborne","Tamworth","Farnworth","Holsworthy","Bredwardine","Orilon ","Aquarine ","Aramore","Azmarin ","Beggar's Hole ","Black Hallows","Briar Glen ","Bracklewhyte","Bellmare ","Cirrane ","Caelfall ","Crullfeld ","Murkwell","Durnatel","Easthallow ","Acrine ","Erostey","Forstford ","Goulcrest ","Hirane","Hillford ","Ilragorn","Leefside","Mirstone ","Nerton","Aroonshire ","Alryne","Pirn","Torrine","Tardide ","Veritas","Whitebridge ","Wallowdale ","Wolford","Yarlford","Zalfari ","Urmkirkey","Dornwich","Kameeraska","Astrakane","Archmouth","Arkaley","Aelinmiley","Myrefall","Garmsby","Aberstwyth","Alderdyfi ","Alderrdeen ","Aeberuthey","Accreton","Alcombey","Arcton","Martslock","Glarnyraefon","Aermagh","Aeston","Auchendale","Archensheen","Auctermunty","Aucteraden","Arkmunster","Arkney","Bellechulish","Baerney","Bailymena","Ballingsmallard","Ballaeter","Bellmoral","Hullbeck","Beckinsdale","Troutberk","Berkton","Berxley","Blancathey","Blencalgo","Bellenau","Larcbost","Fournemouth","Eastborne","Ashborne","Bleakburn","Banrockburn","Bradfordshire","Braedon","Islesbury","Dawsbury","Middlesborough","Edinborourgh","Bamborourgh","Peterbrugh","Jedborourgh","Gramsby","Taernsby","Kingcardine","Cardend","Laencaster","Duncaster","Glanchester","Warcester","Sirencester","Calchester","Caershire","Carleone","Chaepstow","Barncombe","Ferncombe","Ilfreycombe","Graycott","Swindlincote","Calcheth","Cewmann","Dalelry","Dalmerlington","Aeredale","Rachdale","Craydon","Haerndean","Taedmorden","Arbington","Braedon","Willsden","Durmchapel","Domburton","Dangarnon","Gormsey","Aethelney","Eelry","Harnsey","Sherfield","Hardersfield","Waekefield","Mensfield","Marclesfield","Mirefield","Cesterfield","Murlayfield","Addersfield","Ferndochty","Helmfirth","Burrafirth","Bardford","Aempleforth","Warthford","Farnfoss","Iyesgarth","Gilramore","Garigill","Rptherglen","Glaenarm","Garthram","Ruthorham","Eldham","Favorsham","Ritherhithe","Ayrith","Helmfirth","Foolshope","Galssop","Hewe","Narfolk","Dalhurst","Woodhaerst","Larkinge","Eanverness","Kald","Thralkeld","Penkurth","Calcherth","Calmarnock","Kilerth","Kinecardine","Kineallen","Carningsby","Kirekwall","Armskirk","Caelkirk","Fallkirk","Laenteglos","Lhanbyrde","Lanercoast","Llaneybyder","Longdale","Taewe","Laewaes","Burnsley","Haedleigh","Landow","Llyne","Linemell","Wingston","Wandermere","Crasmere","Cromerth","Transmere","Wombourne","Moressley","Barnemouth","Paethsmouth","Marnmouth","Narnclaedra","Nantgarth","Narthwich","Skargness","Northon","Northbury","Northwich","Paentmarwy","Paendley","Pernrith","Perthlochry","Pitmerden","Palperroth","Peltragow","Pontybridge","Hurtlepool","Blackridgepool","Porthcrawl","Porthaethwidge","Doveport","Panshaw","Perlshaw","Sharpton","Stawford","Sanlow","Harmstead","Barkamsted","Daemarrel","Pathstow","Stathmore","Stratham","Satbury","Sarton","Swindmore","Swanford","Claethorpes","Thorpes","Harthwaite","Tergaron","Tylwaerdreath","Tarnstead","Warlington","Conriston","Clarcton","Alverton","Boroughton","Larton","Malrton","Stathford","Waeldestone","Alnerwick","Barmwich","Sharnwick","Larnwick","Whaelrdrake","Wanborne","Tarmsworth","Fernsworth","Halsworthy","Braedwardith"];
-const {loadImage,createCanvas,Image} = require("canvas")
+const {loadImage,createCanvas,Image, Canvas} = require("canvas")
 const { uniqueNamesGenerator, names } = require('unique-names-generator');
 const Discord = require("discord.js");
 const client = new Discord.Client();
@@ -337,6 +337,237 @@ ctx.fillText(`Time Left: ${timeLeft.getMinutes().toString()} Minutes`,500,155 + 
 ctx.fillStyle = original;
 callback(canvas.toBuffer())
 }
+
+function generateMaze(size,rows,columns,callback){
+    console.log("A")
+    let canvas = createCanvas(1080,1080);
+    let ctx = canvas.getContext("2d");
+    let original = ctx.fillStyle;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = original;
+    ctx.font = "30px sans-serif";
+    let maze = new Maze(size,rows,columns,ctx)
+    callback(canvas.toBuffer())
+}
+
+
+
+class Maze {
+    /**
+     * 
+     * @param {number} size 
+     * @param {number} rows 
+     * @param {number} columns 
+     * @param {Canvas} canvas 
+     */
+   constructor(size,rows,columns,canvas) {
+    this.size = size;
+    this.rows = rows;
+    this.columns = columns;
+    this.canvas = canvas;
+    this.grid = [];
+    this.stack = [];
+    this.firstDraw = true;
+    this.current = null;
+    // this.foundEnd = false;
+    // this.end = null
+   } 
+
+   setup(callck){
+       for(let r = 0; r < this.rows; r++){
+           let row = [];
+           for(let c = 0; c < this.columns; c++){
+               let cell = new Cell(r,c,this.grid,this.size,this.canvas.getContext("2d"));
+               row.push(cell);
+           }
+           this.grid.push(row);
+       }
+       this.current = this.grid[0][0]
+       callck()
+   }
+
+   draw(){
+    this.current.visited = true;
+    let next = this.current.checkNeighbours();
+    // console.log("next",this.current)
+    if(next){
+        next.visited = true;
+        this.stack.push(this.current);
+        this.current.removeWall(this.current,next);
+        this.current = next;
+
+    } else if(this.stack.length > 0) {
+        let cell = this.stack.pop();
+        this.current = cell;
+    }
+
+    if(this.stack.length == 0 && !this.firstDraw){
+        this.canvas.width = this.size;
+        this.canvas.height = this.size;
+        let context = this.canvas.getContext("2d");
+        let original = context.fillStyle;
+        context.fillStyle = "black"
+        context.fillRect(0,0,this.size,this.size);
+        context.fillStyle = original;
+        for(let r = 0; r < this.rows; r++){
+            for(let c = 0; c < this.columns; c++){
+                let grid = this.grid;
+                if(r == 0 && c == 0){
+                  //  console.log(grid[r][c].walls)
+                    grid[r][c].walls.topWall = false;
+                    // grid[grid.length][grid[grid.length].length].bottomWall = false;
+                    // console.log(grid[r][c].walls)
+                }
+                if(r == this.rows - 1 && c == this.columns - 1){
+                    grid[r][c].walls.bottomWall = false;
+                }
+                grid[r][c].show(this.size,this.rows,this.columns)
+            }
+        }
+       // this.end.highlight(this.rows,this.columns,this.size)
+        return true;
+    }
+    if(this.firstDraw) this.firstDraw = false
+   }
+
+}
+
+class Cell {
+    /**
+     * 
+     * @param {number} rowNumb 
+     * @param {number} colNum 
+     * @param {Array} parentGrid 
+     * @param {number} parentSize 
+     * @param {CanvasRenderingContext2D} canvas 
+     */
+    constructor(rowNumb,colNum,parentGrid,parentSize,canvas) {
+        this.rowNumb = rowNumb;
+        this.colNum = colNum;
+        this.parentGrid = parentGrid;
+        this.parentSize = parentSize;
+        this.canvas = canvas
+        this.visited = false;
+        this.walls = {
+            topWall: true,
+            bottomWall: true,
+            leftWall: true,
+            rightWall: true
+        };
+    }
+    /**
+     * 
+     * @param {Cell} cell1 
+     * @param {Cell} cell2 
+     */
+    removeWall(cell1,cell2){
+        let x = (cell1.colNum - cell2.colNum);
+
+        if(x == 1){
+            cell1.walls.leftWall = false;
+            cell2.walls.rightWall = false;
+        } else if(x == -1){
+            cell1.walls.rightWall = false;
+            cell2.walls.leftWall = false;
+        }
+
+        let y = cell1.rowNumb - cell2.rowNumb;
+
+        if(y == 1){
+            cell1.walls.topWall = false;
+            cell2.walls.bottomWall = false;
+        } else if(y == -1){
+            cell1.walls.bottomWall = false;
+            cell2.walls.topWall = false;
+        }
+
+    }
+
+    highlight(columns,rows,size){
+        let x = (this.colNum * this.parentSize) / columns + 1;
+        let y = (this.rowNum * this.parentSize) / columns + 1;
+
+        // let x = (this.colNum * size) / columns;
+        // let y = (this.rowNumb * size) / rows;
+        
+        this.canvas.fillStyle = "purple";
+        this.canvas.fillRect(x,y,this.parentSize/columns - 3,this.parentSize/columns - 3)
+    }
+
+    drawTopWall(x,y,size,columns,rows){
+        this.canvas.beginPath()
+        this.canvas.moveTo(x,y);
+        this.canvas.lineTo(x + (size / columns), y)
+        this.canvas.stroke();
+    }
+    drawRightWall(x,y,size,columns,rows){
+        this.canvas.beginPath()
+        this.canvas.moveTo(x + (size / columns), y);
+        this.canvas.lineTo(x + (size / columns), y + (size / rows))
+        this.canvas.stroke();
+    }
+    drawBottomWall(x,y,size,columns,rows){
+        this.canvas.beginPath()
+        this.canvas.moveTo(x, y + (size / rows));
+        this.canvas.lineTo(x + (size / columns), y + (size / rows))
+        this.canvas.stroke();
+    }
+    drawLeftWall(x,y,size,columns,rows){
+        this.canvas.beginPath()
+        this.canvas.moveTo(x, y);
+        this.canvas.lineTo(x, y + (size / rows))
+        this.canvas.stroke();
+    }
+
+    checkNeighbours(){
+        let grid = this.parentGrid;
+        let row = this.rowNumb;
+        let col = this.colNum;
+        let neighbours = [];
+
+        let top = row !== 0 ? grid[row - 1][col] : undefined;
+        let right = col !== grid.length - 1 ? grid[row][col + 1] : undefined;
+        let bottom = row !== grid.length - 1 ? grid[row + 1][col] : undefined;
+        let left = col !== 0 ? grid[row][col - 1] : undefined;
+    
+        if(top && !top.visited) neighbours.push(top)
+        if(right && !right.visited) neighbours.push(right)
+        if(bottom && !bottom.visited) neighbours.push(bottom)
+        if(left && !left.visited) neighbours.push(left)
+
+        // console.log(neighbours)
+
+        if(neighbours.length !== 0){
+            let random = Math.floor(Math.random() * neighbours.length);
+          //  console.log(random)
+            return neighbours[random];
+
+        } else {
+            return undefined;
+        }
+    }
+
+    show(size,rows,columns){
+        let x = (this.colNum * size) / columns;
+        let y = (this.rowNumb * size) / rows;
+
+        this.canvas.strokeStyle = "white";
+        this.canvas.fillStyle = "black";
+        this.canvas.lineWidth = 2;
+
+        if(this.walls.topWall) this.drawTopWall(x,y,size,columns,rows);
+        if(this.walls.rightWall) this.drawRightWall(x,y,size,columns,rows);
+        if(this.walls.leftWall) this.drawLeftWall(x,y,size,columns,rows);
+        if(this.walls.bottomWall) this.drawBottomWall(x,y,size,columns,rows);    
+    
+        if(this.visited){
+            this.canvas.fillRect(x + 1, y + 1, (size / columns) - 2, (size / rows) - 2)
+        }
+    }
+}
+
+
 
 function generateTown(callback){
 let canvas = createCanvas(540,540);
@@ -1264,6 +1495,23 @@ if(contentArray[0].toLowerCase() == prefix+"battle"){
 if(contentArray[0].toLowerCase() == prefix+"testdata"){
    // message.channel.send(jobRegistry.getRegistry().get("coalmine"));
     // console.log(jobRegistry.getRegistry().get("hunter"))
+    // generateMaze((buff)=>{
+    //     console.log("AAA")
+    //     let a = new Discord.MessageAttachment(buff)
+    //     message.channel.send(a)
+    // })
+    let canvas = createCanvas(1080,1080)
+    let maze = new Maze(1080,30,30,canvas);
+    maze.setup(()=>{
+        let sauce = undefined;
+        while(!sauce === true){
+            sauce = maze.draw();
+          //  console.log(sauce)
+        }
+    })
+
+        let a = new Discord.MessageAttachment(canvas.toBuffer())
+        message.channel.send(a)
 }
 
 if(contentArray[0].toLowerCase() == prefix+"search"){
