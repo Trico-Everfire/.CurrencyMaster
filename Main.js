@@ -142,19 +142,6 @@ function isInsideBoundingBox(boundingBox1,boundingBox2,boundingSize){
 
 }
 
-// function isNotInsideBoundingBox(boundingBox1,boundingBox2,boundingSize){
-
-//     let bb1x = boundingBox1.x;
-//     let bb1y = boundingBox1.y;
-//     let bb2x = boundingBox2.x;
-//     let bb2y = boundingBox2.y;
-//     if(Math.abs(bb1x - bb2x) < boundingSize && Math.abs(bb1y - bb2y) < boundingSize){
-//         return true;
-//     }
-//     return false;
-
-// }
-
 function regenerateTown(town,callback){
     let canvas = createCanvas(540,540);
     let ctx = canvas.getContext("2d");
@@ -338,124 +325,211 @@ ctx.fillStyle = original;
 callback(canvas.toBuffer())
 }
 
+
+/**
+ * 
+ * @param {number} size 
+ * @param {number} rows 
+ * @param {number} columns 
+ * @param {(buffer:Buffer)=>void} callback 
+ */
 function generateMaze(size,rows,columns,callback){
-    console.log("A")
-    let canvas = createCanvas(1080,1080);
-    let ctx = canvas.getContext("2d");
-    let original = ctx.fillStyle;
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = original;
-    ctx.font = "30px sans-serif";
-    let maze = new Maze(size,rows,columns,ctx)
-    callback(canvas.toBuffer())
+    let canvas = createCanvas(size,size);
+    if(rows === "get"){
+        let minstance = new MazeInstnace("RGM"+columns);
+        let maze = new Maze();
+        maze.insertExistingMaze(minstance.getMazeData())
+        maze.draw(canvas)
+//.insertExistingMaze(minstance.getMazeData())
+    } else {
+        let minstance = new MazeInstnace("RGM"+DataBase.viewItemsSync("dungeons",0));
+        let maze = new Maze(size,rows,columns);
+        maze.generate()
+        minstance.setMazeData(maze)
+        maze.draw(canvas)
+    }
+    
+   callback(canvas.toBuffer())
 }
 
 
 
 class Maze {
     /**
-     * 
      * @param {number} size 
      * @param {number} rows 
      * @param {number} columns 
-     * @param {Canvas} canvas 
+   //  * @param {Canvas} canvas 
      */
-   constructor(size,rows,columns,canvas) {
+   constructor(size,rows,columns) {
     this.size = size;
     this.rows = rows;
     this.columns = columns;
-    this.canvas = canvas;
+    this.initiated = false;
     this.grid = [];
     this.stack = [];
+    this.drawInfo = {
+        hasRightWall:[],
+        hasLeftWall:[],
+        hasTopWall:[],
+        hasBottomWall:[],
+        isCorner:[],
+        isCenter:[],
+        specialLootTable:{}
+    }
     this.firstDraw = true;
     this.current = null;
-    // this.foundEnd = false;
-    // this.end = null
    } 
 
-   setup(callck){
+   generate(){
+    this.initiated = true;
        for(let r = 0; r < this.rows; r++){
            let row = [];
            for(let c = 0; c < this.columns; c++){
-               let cell = new Cell(r,c,this.grid,this.size,this.canvas.getContext("2d"));
+               let cell = new Cell(r,c,this.size);
                row.push(cell);
            }
            this.grid.push(row);
        }
        this.current = this.grid[0][0]
-       callck()
+       while(this.runGeneration() != true);
+       this.addRooms();
+       let totalNumber = 0
+       for(let r = 0; r < this.rows; r++){
+            for(let c = 0; c < this.columns; c++){
+                let cell = this.grid[r][c];
+
+                if(r == 0 && c == 0){
+                    cell.walls.topWall = false;
+                }
+                if(r == this.rows - 1 && c == this.columns - 1){
+                    cell.walls.bottomWall = false;
+                }
+
+                if(cell.walls.topWall){
+                    this.drawInfo.hasTopWall.push(totalNumber)
+                }
+                if(cell.walls.bottomWall){
+                    this.drawInfo.hasBottomWall.push(totalNumber)
+                }
+                if(cell.walls.leftWall){
+                    this.drawInfo.hasLeftWall.push(totalNumber)
+                }
+                if(cell.walls.rightWall){
+                    this.drawInfo.hasRightWall.push(totalNumber)
+                }
+                if(cell.isCorner){
+                    this.drawInfo.isCorner.push(totalNumber)
+                }
+                if(cell.isRoomCenter){
+                    this.drawInfo.isCenter.push(totalNumber)
+                }
+                if(cell.lootTable.length > 0){
+                    this.drawInfo.specialLootTable[(totalNumber).toString()] = cell.lootTable;
+                }
+                totalNumber++
+            }
+            totalNumber++
+        }
+        this.grid = [];
    }
 
-   draw(){
-    this.current.visited = true;
-    let next = this.current.checkNeighbours();
-    // console.log("next",this.current)
-    if(next){
-        next.visited = true;
-        this.stack.push(this.current);
-        this.current.removeWall(this.current,next);
-        this.current = next;
+   /**
+    * @param {Maze} maze 
+    */
+   insertExistingMaze(maze){
+    Object.assign(this,maze)
+   }
 
-    } else if(this.stack.length > 0) {
-        let cell = this.stack.pop();
-        this.current = cell;
+   getNonCornerPiece(){
+    let getRow = Math.floor(Math.random() * this.rows) + 1;
+    let getCol = Math.floor(Math.random() * this.columns) + 1;
+    let cellCol = this.grid[getCol];
+    let cell
+    if(cellCol){
+        cell = cellCol[getRow];
     }
+    
+    if(cell && cell.isCorner) return this.getNonCornerPiece()
+    return {row:getRow,column:getCol};
+   }
 
-    if(this.stack.length == 0 && !this.firstDraw){
-        this.canvas.width = this.size;
-        this.canvas.height = this.size;
-        let context = this.canvas.getContext("2d");
+   addRooms(){
+    let rows = this.rows;
+    let columns = this.columns;
+    let roomAmnt = (rows + columns) < (40) ? 0 : (rows + columns) < (80) ? (Math.floor(Math.random() * 2) + 1) : (rows + columns) < (120) ? (Math.floor(Math.random() * 4) + 2) : (Math.floor(Math.random() * 6) + 3);
+        for(let i = 0; i < roomAmnt; i++){
+
+           let rocol = this.getNonCornerPiece();
+           let getRow = rocol.row;
+           let getCol = rocol.column;
+            for(let j = 0; j < 3; j++){
+                for(let k = 0; k < 3; k++){
+                    let colCell = this.grid[getCol + j];
+                    if(colCell){
+                        let cell = colCell[getRow + k];
+                        if(cell && !cell.isCorner){
+
+                            if((getCol + 1) == (getCol + j) && (getRow + k) == (getRow + 1)){
+                                cell.isRoomCenter = true;
+                            }
+                            
+                            cell.walls.leftWall = false;
+                            cell.walls.rightWall = false;
+                            cell.walls.bottomWall = false;
+                            cell.walls.topWall = false;
+                            
+                        }
+                    }
+
+                }   
+            }
+        }
+
+   }
+
+   draw(canvas){
+    if(this.initiated){
+        canvas.width = this.size;
+        canvas.height = this.size;
+        let context = canvas.getContext("2d");
         let original = context.fillStyle;
         context.fillStyle = "black"
         context.fillRect(0,0,this.size,this.size);
         context.fillStyle = original;
+        let totalNumber = 0
         for(let r = 0; r < this.rows; r++){
             for(let c = 0; c < this.columns; c++){
-                let grid = this.grid;
-                if(r == 0 && c == 0){
-                  //  console.log(grid[r][c].walls)
-                    grid[r][c].walls.topWall = false;
-                    // grid[grid.length][grid[grid.length].length].bottomWall = false;
-                    // console.log(grid[r][c].walls)
-                }
-                if(r == this.rows - 1 && c == this.columns - 1){
-                    grid[r][c].walls.bottomWall = false;
-                }
-                grid[r][c].show(this.size,this.rows,this.columns)
+                this.show({colNum:c,rowNum:r,coreNumb:totalNumber},this.size,this.rows,this.columns,context)
+                totalNumber++
             }
+            totalNumber++
         }
-       // this.end.highlight(this.rows,this.columns,this.size)
-        return true;
+    } else {
+        console.warn("maze draw run before initiation, action canceled to prevent fatal error")
     }
-    if(this.firstDraw) this.firstDraw = false
    }
+
+   show(cell,size,rows,columns,canvas){
+    let x = (cell.colNum * size) / columns;
+    let y = (cell.rowNum * size) / rows;
+
+    canvas.strokeStyle = "white";
+    canvas.fillStyle = "black";
+    canvas.lineWidth = 2;
+  //  console.log(cell.colNum + cell.rowNum)
+   // console.log(this.drawInfo.hasTopWall)
+    if(this.drawInfo.hasTopWall.includes(cell.coreNumb)) this.drawTopWall(x,y,size,columns,rows,canvas);
+    if(this.drawInfo.hasRightWall.includes(cell.coreNumb)) this.drawRightWall(x,y,size,columns,rows,canvas);
+    if(this.drawInfo.hasLeftWall.includes(cell.coreNumb)) this.drawLeftWall(x,y,size,columns,rows,canvas);
+    if(this.drawInfo.hasBottomWall.includes(cell.coreNumb)) this.drawBottomWall(x,y,size,columns,rows,canvas);    
+ //   console.log(this.drawInfo.isCenter)
+    if(this.drawInfo.isCenter.includes(cell.coreNumb)){
+        this.highlight(cell,this.columns,"red",canvas);
+    }
 
 }
 
-class Cell {
-    /**
-     * 
-     * @param {number} rowNumb 
-     * @param {number} colNum 
-     * @param {Array} parentGrid 
-     * @param {number} parentSize 
-     * @param {CanvasRenderingContext2D} canvas 
-     */
-    constructor(rowNumb,colNum,parentGrid,parentSize,canvas) {
-        this.rowNumb = rowNumb;
-        this.colNum = colNum;
-        this.parentGrid = parentGrid;
-        this.parentSize = parentSize;
-        this.canvas = canvas
-        this.visited = false;
-        this.walls = {
-            topWall: true,
-            bottomWall: true,
-            leftWall: true,
-            rightWall: true
-        };
-    }
     /**
      * 
      * @param {Cell} cell1 
@@ -484,58 +558,60 @@ class Cell {
 
     }
 
-    highlight(columns,rows,size){
-        let x = (this.colNum * this.parentSize) / columns + 1;
-        let y = (this.rowNum * this.parentSize) / columns + 1;
-
-        // let x = (this.colNum * size) / columns;
-        // let y = (this.rowNumb * size) / rows;
-        
-        this.canvas.fillStyle = "purple";
-        this.canvas.fillRect(x,y,this.parentSize/columns - 3,this.parentSize/columns - 3)
+    highlight(cell,columns,color,canvas){
+        let x = (cell.colNum * this.size) / columns + 1;
+        let y = (cell.rowNum * this.size) / columns + 1;
+        canvas.fillStyle = color;
+        canvas.fillRect(x,y,this.size/columns - 3,this.size/columns - 3)
     }
 
-    drawTopWall(x,y,size,columns,rows){
-        this.canvas.beginPath()
-        this.canvas.moveTo(x,y);
-        this.canvas.lineTo(x + (size / columns), y)
-        this.canvas.stroke();
+    drawTopWall(x,y,size,columns,rows,canvas){
+        canvas.beginPath()
+        canvas.moveTo(x,y);
+        canvas.lineTo(x + (size / columns), y)
+        canvas.stroke();
     }
-    drawRightWall(x,y,size,columns,rows){
-        this.canvas.beginPath()
-        this.canvas.moveTo(x + (size / columns), y);
-        this.canvas.lineTo(x + (size / columns), y + (size / rows))
-        this.canvas.stroke();
+    drawRightWall(x,y,size,columns,rows,canvas){
+        canvas.beginPath()
+        canvas.moveTo(x + (size / columns), y);
+        canvas.lineTo(x + (size / columns), y + (size / rows))
+        canvas.stroke();
     }
-    drawBottomWall(x,y,size,columns,rows){
-        this.canvas.beginPath()
-        this.canvas.moveTo(x, y + (size / rows));
-        this.canvas.lineTo(x + (size / columns), y + (size / rows))
-        this.canvas.stroke();
+    drawBottomWall(x,y,size,columns,rows,canvas){
+        canvas.beginPath()
+        canvas.moveTo(x, y + (size / rows));
+        canvas.lineTo(x + (size / columns), y + (size / rows))
+        canvas.stroke();
     }
-    drawLeftWall(x,y,size,columns,rows){
-        this.canvas.beginPath()
-        this.canvas.moveTo(x, y);
-        this.canvas.lineTo(x, y + (size / rows))
-        this.canvas.stroke();
+    drawLeftWall(x,y,size,columns,rows,canvas){
+        canvas.beginPath()
+        canvas.moveTo(x, y);
+        canvas.lineTo(x, y + (size / rows))
+        canvas.stroke();
     }
 
-    checkNeighbours(){
-        let grid = this.parentGrid;
-        let row = this.rowNumb;
-        let col = this.colNum;
+    checkNeighbours(cell){
+        let grid = this.grid//.every((value,index)=>index <= cell.rowNumb);
+        let row = cell.rowNumb;
+        let col = cell.colNum;
         let neighbours = [];
 
         let top = row !== 0 ? grid[row - 1][col] : undefined;
         let right = col !== grid.length - 1 ? grid[row][col + 1] : undefined;
         let bottom = row !== grid.length - 1 ? grid[row + 1][col] : undefined;
         let left = col !== 0 ? grid[row][col - 1] : undefined;
+        let isCornerPiece = col === 0 || row === 0 || col === grid.length - 1 || row === grid.length - 1 ? grid[row][col] : undefined
     
+        // if(!top) top.isCorner = true;
+        // if(!right) right.isCorner = true;
+        // if(!bottom) bottom.isCorner = true;
+        // if(!left) left.isCorner = true;
+
         if(top && !top.visited) neighbours.push(top)
         if(right && !right.visited) neighbours.push(right)
         if(bottom && !bottom.visited) neighbours.push(bottom)
         if(left && !left.visited) neighbours.push(left)
-
+        if(isCornerPiece) isCornerPiece.isCorner = true;
         // console.log(neighbours)
 
         if(neighbours.length !== 0){
@@ -547,24 +623,60 @@ class Cell {
             return undefined;
         }
     }
+   runGeneration(){
+    this.current.visited = true;
+    let next = this.checkNeighbours(this.current);
 
-    show(size,rows,columns){
-        let x = (this.colNum * size) / columns;
-        let y = (this.rowNumb * size) / rows;
+    if(next){
+        next.visited = true;
+        this.stack.push(this.current);
+        this.removeWall(this.current,next);
+        this.current = next;
 
-        this.canvas.strokeStyle = "white";
-        this.canvas.fillStyle = "black";
-        this.canvas.lineWidth = 2;
-
-        if(this.walls.topWall) this.drawTopWall(x,y,size,columns,rows);
-        if(this.walls.rightWall) this.drawRightWall(x,y,size,columns,rows);
-        if(this.walls.leftWall) this.drawLeftWall(x,y,size,columns,rows);
-        if(this.walls.bottomWall) this.drawBottomWall(x,y,size,columns,rows);    
-    
-        if(this.visited){
-            this.canvas.fillRect(x + 1, y + 1, (size / columns) - 2, (size / rows) - 2)
-        }
+    } else if(this.stack.length > 0) {
+        let cell = this.stack.pop();
+        this.current = cell;
     }
+
+
+    if(this.stack.length == 0 && !this.firstDraw){
+        // for(let gridArr of this.grid){
+        //     for(let cells of gridArr){
+        //         cells.parentGrid = []
+        //     }
+        // }
+        return true;
+
+    }
+    if(this.firstDraw) this.firstDraw = false
+   }
+
+}
+
+class Cell {
+    /**
+     * @param {number} rowNumb 
+     * @param {number} colNum 
+     * @param {Array} parentGrid 
+     * @param {number} parentSize 
+    // * @param {CanvasRenderingContext2D} canvas 
+     */
+    constructor(rowNumb,colNum,parentSize,gridNumb) {
+        this.rowNumb = rowNumb;
+        this.colNum = colNum;
+        this.parentSize = parentSize;
+        this.isCorner = false;
+        this.lootTable = [];
+        this.isRoomCenter = false;
+        this.visited = false;
+        this.walls = {
+            topWall: true,
+            bottomWall: true,
+            leftWall: true,
+            rightWall: true
+        };
+    }
+
 }
 
 
@@ -1055,6 +1167,100 @@ class DataInstancer {
 
 }
 
+class AdvancedDataInstancer {
+    /**
+     * @param {{}} Variables An object that houses all variables you want to use inside defaultData().
+     * @param {string} table (Mandatory) the folder to which to house the file (for root directory usage use "./").
+     * @param {string} fileLoc (Mandatory) the name of the file (for instance: "testFile").
+     * @param {(table:string,filelocation:string,{})=>void} save (Mandatory) The save Lambda, a function that saves the file upon being called.
+     * @param {(table:string,filelocation:string)=>{}} load (Mandatory) The load Lambda, a function that returns the saved object upon being called.
+     * @param {(table:string,filelocation:string)=>boolean} exist (Mandatory) The exist Lambda, a function that checks if the file exists and returns it's boolean.
+     */
+    constructor(Variables,table,fileLoc,save,load,exist){
+        this.table = table;
+        this.fileLoc = fileLoc;
+        this.Variables = Variables;
+        this.save = save;
+        this.load = load;
+        this.exist = exist;
+        let exists = DataInstancer.validInstance(this.table,this.fileLoc,this.exist);
+        if(exists){
+            this.dataInstance = load(this.table,this.fileLoc);
+        } else {
+            this.dataInstance = this.defaultData();
+            save(this.table,this.fileLoc,this.dataInstance);
+        }
+        
+    }
+
+    /**
+     * 
+     * @param {string} table (Mandatory) the folder to which to house the file (for root directory usage use "./").
+     * @param {string} fileLoc (Mandatory) the name of the file (for instance: "testFile").
+     * @param {(table:string,filelocation:string)=>boolean} exist (Mandatory) The exist Lambda, a function that checks if the file exists and returns it's boolean. 
+     */
+    static validInstance(table,fileLoc,exist){
+        return exist(table,fileLoc);
+    }
+
+    /**
+     * @description defaultData is a method you want to overwrite whenever you extend DataInstancer, here you can house all your variables you want the saved object to have upon being created, use this.Variables to get any outside variables.
+     */
+    defaultData(){
+        return {}
+    }
+
+    /**
+     * @description saves the object data to file.
+     * @param {{}|null} data the data object, if left null, it will save the current instance (if you add more methods in the extended class that change this.dataInstance directly, calling saveData with null will save the instance to file.)
+     */
+    saveData(data){
+        if(data == undefined){
+            this.save(this.table,this.fileLoc,this.dataInstance);
+        } else {
+            this.dataInstance = data;
+            this.save(this.table,this.fileLoc,this.dataInstance);
+        }
+
+    }
+
+    /**
+     * @description getData will get the dataInstance.
+     */
+    getData(){
+        return this.dataInstance
+    }
+
+}
+
+class MazeInstnace extends AdvancedDataInstancer{
+/**
+ * 
+ * @param {string} mazeName 
+ */
+    constructor(mazeName) {
+        super({mazeName},"dungeons","MazeData_"+mazeName+"_file",(table,fileLoc,data)=>DataBase.newItemSync(table,fileLoc,data),(table,fileLoc)=>DataBase.getGuaranteedItemSync(table,fileLoc).result[1],(table,fileLoc)=>DataBase.itemExistSync(table,fileLoc,0));
+    }
+
+    setMazeData(maze){
+        this.dataInstance.mazeData = {size:maze.size,rows:maze.rows,columns:maze.columns,initiated:maze.initiated,drawInfo:maze.drawInfo};
+        this.saveData();
+    }
+    /**
+     * @returns {{}}
+     */
+    getMazeData(){
+       return this.dataInstance.mazeData;
+    }
+
+    defaultData(){
+        return {
+        "name":this.Variables.mazeName,
+        "mazeData":undefined
+        }
+    }
+}
+
 class EnemyRegistry {
     
     constructor() {
@@ -1500,18 +1706,24 @@ if(contentArray[0].toLowerCase() == prefix+"testdata"){
     //     let a = new Discord.MessageAttachment(buff)
     //     message.channel.send(a)
     // })
-    let canvas = createCanvas(1080,1080)
-    let maze = new Maze(1080,30,30,canvas);
-    maze.setup(()=>{
-        let sauce = undefined;
-        while(!sauce === true){
-            sauce = maze.draw();
-          //  console.log(sauce)
-        }
+    // let canvas = createCanvas(1080,1080)
+    // let maze = new Maze(1080,30,30,canvas);
+    // maze.setup()
+   // if()
+    if(contentArray[1] != undefined && contentArray[1] == "get"){
+        generateMaze(1080,"get",colrows,(canvasBuffer)=>{
+            let a = new Discord.MessageAttachment(canvasBuffer)
+            message.channel.send(a)
+        })
+    } else {
+   let colrows = contentArray[1] != undefined && !Number.isNaN(Number.parseInt(contentArray[1])) ? Number.parseInt(contentArray[1]) : 50
+    let mazeres = contentArray[2] != undefined && !Number.isNaN(Number.parseInt(contentArray[2])) ? Number.parseInt(contentArray[2]) : 1080
+    generateMaze(mazeres,colrows,colrows,(canvasBuffer)=>{
+        let a = new Discord.MessageAttachment(canvasBuffer)
+        message.channel.send(a)
     })
 
-        let a = new Discord.MessageAttachment(canvas.toBuffer())
-        message.channel.send(a)
+}
 }
 
 if(contentArray[0].toLowerCase() == prefix+"search"){
