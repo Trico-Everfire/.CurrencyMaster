@@ -689,7 +689,7 @@ DataBase.newTableSync("servers");
 DataBase.newTableSync("NPCS");
 DataBase.newTableSync("autoINC");
 DataBase.newTableSync("ITEMS");
-//let DW = new HWDBTCP(25565,DataBase);
+
 const extName = DataBase.getExtensionName();
 
 let HAI,
@@ -1041,14 +1041,17 @@ function loadInventorySystem(Player, message, callback) {
 function generateMaze(size, rows, columns, callback) {
 	let canvas = createCanvas(size, size);
 	if (rows === "get") {
+
+        if(DataBase.viewItemsSync("dungeons", 0).val.length > Number.parseInt(columns)){
 		let minstance = new MazeInstnace("RGM" + columns);
-		let maze = new Maze();
+        let maze = new Maze();
 		maze.insertExistingMaze(minstance.getMazeData());
 		maze.draw(canvas);
-		//.insertExistingMaze(minstance.getMazeData())
+
+        }
 	} else {
 		let minstance = new MazeInstnace(
-			"RGM" + DataBase.viewItemsSync("dungeons", 0)
+			"RGM" + DataBase.viewItemsSync("dungeons", 0).val.length
 		);
 		let maze = new Maze(size, rows, columns);
 		maze.generate();
@@ -1135,7 +1138,7 @@ class Maze {
 				}
 				totalNumber++;
 			}
-			totalNumber++;
+		//	totalNumber++;
 		}
 		this.grid = [];
 	}
@@ -1217,7 +1220,7 @@ class Maze {
 					);
 					totalNumber++;
 				}
-				totalNumber++;
+			//	totalNumber++;
 			}
 		} else {
 			console.warn(
@@ -1276,11 +1279,12 @@ class Maze {
 		}
 	}
 
-	highlight(cell, columns, color, canvas) {
-		let x = (cell.colNum * this.size) / columns + 1;
-		let y = (cell.rowNum * this.size) / columns + 1;
+	highlight(cell, columns, color, canvas,addScaling) {
+        addScaling == undefined ? addScaling = 0 : null;
+		let x = (cell.colNum * this.size) / (columns) + (1 + (addScaling / 2));
+        let y = (cell.rowNum * this.size) / (columns) + (1 + (addScaling / 2));
 		canvas.fillStyle = color;
-		canvas.fillRect(x, y, this.size / columns - 3, this.size / columns - 3);
+		canvas.fillRect(x, y, this.size / columns - (3 + addScaling), this.size / columns - (3 + addScaling));
 	}
 
 	drawTopWall(x, y, size, columns, rows, canvas) {
@@ -2240,7 +2244,8 @@ class Player extends DataInstancer {
 			user: this.UID,
 			data: {
 				currency: 0.0,
-				jobs: [],
+                jobs: [],
+                dungeonLocationSystem:{},
 				battleSystem: {},
 				isWorking: false,
 				workEfficiency: 1.0,
@@ -2258,7 +2263,7 @@ class Player extends DataInstancer {
 				},
 			},
 			inventory: [],
-			transports: [],
+            transports: [],
 			allies: [],
 			enemies: [],
 			party: [],
@@ -2581,7 +2586,111 @@ client.on("message", async (message) => {
 		}
 
 	if (contentArray[0].toLowerCase() == prefix + "battle") {
-	}
+    }
+    
+    if(contentArray[0].toLowerCase() == prefix + "runmaze"){
+        let maze = contentArray[1] != undefined && !Number.isNaN(Number.parseInt(contentArray[1]) && DataBase.viewItemsSync("dungeons", 0).val.length > Number.parseInt(contentArray[1])) ? Number.parseInt(contentArray[1]) : null;
+        if(maze != null){
+            let minstance = new MazeInstnace("RGM" + maze);
+            let mazeInstance = new Maze();
+            mazeInstance.insertExistingMaze(minstance.getMazeData())
+            let canvas = createCanvas(mazeInstance.size,mazeInstance.size)
+            let UserMazeData = usableData.data.dungeonLocationSystem["RGM" + maze]
+            if(!UserMazeData){
+                UserMazeData = {userPos:0,foundItems:{}}
+                usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                player.saveData(usableData);
+            }
+
+            if(contentArray[2] != undefined && contentArray[2].toLowerCase() == "left"){
+                //let x = UserMazeData.rowNum - 1 //- 1;
+                //let y = UserMazeData.colNum// - 1;
+               // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
+               // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
+                //let locationX = (x * mazeInstance.size) / (mazeInstance.columns)
+                //let locationY = (y * mazeInstance.size) / (mazeInstance.columns)
+                let cantTravelTo = mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos);
+                if(!cantTravelTo){
+                    UserMazeData.userPos-=1;
+                    usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                    player.saveData(usableData);
+                } else {
+                    message.channel.send("you cannot move here.")
+                }
+            }
+
+            if(contentArray[2] != undefined && contentArray[2].toLowerCase() == "right"){
+                // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
+                // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
+                let cantTravelTo = mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos);
+                if(!cantTravelTo){
+                    UserMazeData.userPos+=1;
+                    usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                    player.saveData(usableData);
+                } else {
+                    message.channel.send("you cannot move here.")
+                }
+            
+            }
+
+            if(contentArray[2] != undefined && contentArray[2].toLowerCase() == "up"){
+                //let x = UserMazeData.rowNum - 1 //- 1;
+                //let y = UserMazeData.colNum// - 1;
+               // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
+               // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
+                //let locationX = (x * mazeInstance.size) / (mazeInstance.columns)
+                //let locationY = (y * mazeInstance.size) / (mazeInstance.columns)
+                let cantTravelTo = mazeInstance.drawInfo.hasTopWall.includes(UserMazeData.userPos);
+                if(!cantTravelTo && UserMazeData.userPos-mazeInstance.columns > -1){
+                    UserMazeData.userPos-=(mazeInstance.columns);
+                    usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                    player.saveData(usableData);
+                } else {
+                    message.channel.send("you cannot move here.")
+                }
+               
+            }
+
+            if(contentArray[2] != undefined && contentArray[2].toLowerCase() == "down"){
+           //     let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
+            //    let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
+            let cantTravelTo = mazeInstance.drawInfo.hasBottomWall.includes(UserMazeData.userPos);
+            if(!cantTravelTo && UserMazeData.userPos+mazeInstance.columns < (mazeInstance.columns*mazeInstance.rows) + 1){
+                UserMazeData.userPos+=(mazeInstance.columns);
+                usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                player.saveData(usableData);
+            } else {
+                message.channel.send("you cannot move here.")
+            }
+                
+            }
+
+            mazeInstance.draw(canvas);
+            let playerColor
+            if(notDMS)
+            playerColor = message.member.displayHexColor == "#000000" ? "#ffffff" : message.member.displayHexColor;
+            else
+            playerColor = "#ffffff";
+            console.log(
+               playerColor
+           )
+
+            let i = UserMazeData.userPos % mazeInstance.columns;
+            let i2 = UserMazeData.userPos - i;
+            let solution = i2 / mazeInstance.columns;
+            let XPos = solution;
+            let YPos = UserMazeData.userPos - (mazeInstance.columns * XPos)
+            console.log(YPos,XPos)
+            mazeInstance.highlight({rowNum:XPos,colNum:YPos},mazeInstance.columns,playerColor,canvas.getContext("2d"), 5)
+            
+            let a = new Discord.MessageAttachment(canvas.toBuffer());
+            message.channel.send(a);
+
+        } else {
+            return message.channel.send("invalid maze");
+        }
+    
+    }
 
 	if (contentArray[0].toLowerCase() == prefix + "testdata") {
 		// message.channel.send(jobRegistry.getRegistry().get("coalmine"));
@@ -2593,24 +2702,20 @@ client.on("message", async (message) => {
 		// })
 		// let canvas = createCanvas(1080,1080)
 		// let maze = new Maze(1080,30,30,canvas);
-		// maze.setup()
-		// if()
+        // maze.setup()
+        
+        let colrows = contentArray[1] != undefined && !Number.isNaN(Number.parseInt(contentArray[1])) ? Number.parseInt(contentArray[1]) : 50;
+        let mazeres = contentArray[2] != undefined && !Number.isNaN(Number.parseInt(contentArray[2])) ? Number.parseInt(contentArray[2]) : 1080;
+
 		if (contentArray[1] != undefined && contentArray[1] == "get") {
-			generateMaze(1080, "get", colrows, (canvasBuffer) => {
+            
+            if(contentArray[2] == undefined && Number.isNaN(Number.parseInt(contentArray[2]))) return message.channel.send("invalid number")
+            
+            generateMaze(1080, "get", contentArray[2], (canvasBuffer) => {
 				let a = new Discord.MessageAttachment(canvasBuffer);
 				message.channel.send(a);
 			});
 		} else {
-			let colrows =
-				contentArray[1] != undefined &&
-				!Number.isNaN(Number.parseInt(contentArray[1]))
-					? Number.parseInt(contentArray[1])
-					: 50;
-			let mazeres =
-				contentArray[2] != undefined &&
-				!Number.isNaN(Number.parseInt(contentArray[2]))
-					? Number.parseInt(contentArray[2])
-					: 1080;
 			generateMaze(mazeres, colrows, colrows, (canvasBuffer) => {
 				let a = new Discord.MessageAttachment(canvasBuffer);
 				message.channel.send(a);
@@ -3287,6 +3392,8 @@ client.on("message", async (message) => {
 		}
 	}
 });
+
+
 
 function toFixed(num, precision) {
 	return (+(Math.round(+(num + "e" + precision)) + "e" + -precision)).toFixed(
