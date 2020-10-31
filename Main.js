@@ -678,6 +678,7 @@ const HWDBTCP = require("./libs/hawkwhisper").HAWKTCP;
 const key = require("./libs/key.json");
 const express = require('express')
 const app = express()
+const port = 25565
 
 //app.use(express.static("/image/"))
 
