@@ -671,11 +671,44 @@ let fantasyTownName = [
 const { loadImage, createCanvas, Image, Canvas } = require("canvas");
 const { uniqueNamesGenerator, names } = require("unique-names-generator");
 const Discord = require("discord.js");
-const client = new Discord.Client();
+const client = new Discord.Client({partials:["REACTION"]});
 const deepcopy = require("deepcopy");
 const HWDB = require("./libs/hawkwhisper").HWDB;
 const HWDBTCP = require("./libs/hawkwhisper").HAWKTCP;
 const key = require("./libs/key.json");
+const express = require('express')
+const app = express()
+
+//app.use(express.static("/image/"))
+
+app.use('/TE_IMGINFO_MAZEINFO', express.static(__dirname + '/images/mazeInfo',{etag:false}));
+
+// app.get("/",(req,res)=>{
+//     res.send(`
+    
+//     <!DOCTYPE html>
+// <html>
+// <head>
+//     <meta charset='utf-8'>
+//     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+//     <title>Page Title</title>
+//     <meta name='viewport' content='width=device-width, initial-scale=1'>
+  
+// </head>
+// <body>
+    
+// </body>
+// </html>
+    
+//     `)
+//     // res.send(HAI)
+
+// })
+
+app.listen(port,()=>{
+   // console.log("za warudo!")
+})
+
 const { isObject } = require("util");
 const DataBase = new HWDB(
 	["data", "data2"],
@@ -1082,7 +1115,8 @@ class Maze {
 			hasTopWall: [],
 			hasBottomWall: [],
 			isCorner: [],
-			isCenter: [],
+            isCenter: [],
+            playersInMaze:[],
 			specialLootTable: {},
 		};
 		this.firstDraw = true;
@@ -2303,7 +2337,6 @@ class Player extends DataInstancer {
 		}
 	}
 }
-
 function checkInstanceDefaults(userData, DefaultState) {
 	let shouldUpdate = false;
 	for (let state in DefaultState) {
@@ -2326,7 +2359,6 @@ function checkInstanceDefaults(userData, DefaultState) {
 	}
 	return { shouldUpdate, userData };
 }
-
 class Server extends DataInstancer {
 	constructor(UID) {
 		super(UID, "servers", "ServerData_" + UID + "_file");
@@ -2422,7 +2454,6 @@ class NPCRegistry {
 		}
 	}
 }
-//let enemyRegistry = new EnemyRegistry();
 restockShopsOn2HourPass();
 let TOD;
 let HOD;
@@ -2489,6 +2520,10 @@ function restockShopsOn2HourPass() {
 Player.validateWithDefault();
 
 let jobRegistry = new JobRegistry();
+
+let reactionLogCache = {
+    mazeMovementCache:{}
+}
 
 client.on("message", async (message) => {
 	if (message.author.bot && message.author.id != "604792661198635195") return;
@@ -2596,72 +2631,32 @@ client.on("message", async (message) => {
             mazeInstance.insertExistingMaze(minstance.getMazeData())
             let canvas = createCanvas(mazeInstance.size,mazeInstance.size)
             let UserMazeData = usableData.data.dungeonLocationSystem["RGM" + maze]
-            if(!UserMazeData){
+
+            if(!mazeInstance.drawInfo.playersInMaze.includes(message.author.id)){
                 UserMazeData = {userPos:0,foundItems:{}}
                 usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
-                player.saveData(usableData);
+                mazeInstance.drawInfo.playersInMaze.push(message.author.id)
+                minstance.setMazeData(mazeInstance)
+                player.saveData(usableData)
+                message.channel.send("you have entered the maze, be aware of enemies, look for rooms (red quares) to find loot.")
+            // } else {
+            // // if(!UserMazeData){
+            //     UserMazeData = {userPos:0,foundItems:{}}
+            //     usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+            //     player.saveData(usableData);
+
+            // // }
             }
 
-            if(contentArray[2] != undefined && contentArray[2].toLowerCase() == "left"){
-                //let x = UserMazeData.rowNum - 1 //- 1;
-                //let y = UserMazeData.colNum// - 1;
-               // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
-               // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
-                //let locationX = (x * mazeInstance.size) / (mazeInstance.columns)
-                //let locationY = (y * mazeInstance.size) / (mazeInstance.columns)
-                let cantTravelTo = mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos);
-                if(!cantTravelTo){
-                    UserMazeData.userPos-=1;
-                    usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
-                    player.saveData(usableData);
-                } else {
-                    message.channel.send("you cannot move here.")
-                }
-            }
 
-            if(contentArray[2] != undefined && contentArray[2].toLowerCase() == "right"){
-                // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
-                // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
-                let cantTravelTo = mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos);
-                if(!cantTravelTo){
-                    UserMazeData.userPos+=1;
-                    usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
-                    player.saveData(usableData);
-                } else {
-                    message.channel.send("you cannot move here.")
-                }
-            
-            }
-
-            if(contentArray[2] != undefined && contentArray[2].toLowerCase() == "up"){
-                //let x = UserMazeData.rowNum - 1 //- 1;
-                //let y = UserMazeData.colNum// - 1;
-               // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
-               // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
-                //let locationX = (x * mazeInstance.size) / (mazeInstance.columns)
-                //let locationY = (y * mazeInstance.size) / (mazeInstance.columns)
-                let cantTravelTo = mazeInstance.drawInfo.hasTopWall.includes(UserMazeData.userPos);
-                if(!cantTravelTo && UserMazeData.userPos-mazeInstance.columns > -1){
-                    UserMazeData.userPos-=(mazeInstance.columns);
-                    usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
-                    player.saveData(usableData);
-                } else {
-                    message.channel.send("you cannot move here.")
-                }
-               
-            }
-
-            if(contentArray[2] != undefined && contentArray[2].toLowerCase() == "down"){
-           //     let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
-            //    let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
-            let cantTravelTo = mazeInstance.drawInfo.hasBottomWall.includes(UserMazeData.userPos);
-            if(!cantTravelTo && UserMazeData.userPos+mazeInstance.columns < (mazeInstance.columns*mazeInstance.rows) + 1){
-                UserMazeData.userPos+=(mazeInstance.columns);
+            if(!UserMazeData.foundItems[UserMazeData.userPos] && mazeInstance.drawInfo.specialLootTable[UserMazeData.userPos]){
+                UserMazeData.foundItems[UserMazeData.userPos] = mazeInstance.drawInfo.specialLootTable[UserMazeData.userPos];
                 usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
                 player.saveData(usableData);
-            } else {
-                message.channel.send("you cannot move here.")
-            }
+                message.channel.send("you found: ")
+                for(let loot of mazeInstance.drawInfo.specialLootTable[UserMazeData.userPos]){
+                    message.channel.send(loot.Quantity.toString() + " " + loot.Name);
+                }
                 
             }
 
@@ -2675,6 +2670,7 @@ client.on("message", async (message) => {
                playerColor
            )
 
+
             let i = UserMazeData.userPos % mazeInstance.columns;
             let i2 = UserMazeData.userPos - i;
             let solution = i2 / mazeInstance.columns;
@@ -2683,8 +2679,44 @@ client.on("message", async (message) => {
             console.log(YPos,XPos)
             mazeInstance.highlight({rowNum:XPos,colNum:YPos},mazeInstance.columns,playerColor,canvas.getContext("2d"), 5)
             
-            let a = new Discord.MessageAttachment(canvas.toBuffer());
-            message.channel.send(a);
+            //let a = new Discord.MessageAttachment(canvas.toBuffer(),"maze.png");
+           // console.log()
+            // let embed = new Discord.MessageEmbed()
+            // .attachFiles(a)
+            // .setImage('attachment://maze.png')
+            //.set
+
+            // const exampleEmbed = {
+            //     image: {
+            //         url: 'attachment://maze.png',
+            //     },
+            // };
+
+            fs.writeFileSync(
+                "./images/mazeInfo/"+message.author.id+"_mazeRun.png",
+                canvas.toDataURL().replace(/^data:image\/png;base64,/, ""),
+                "base64"
+            );
+
+         //   message.channel.send(a).then(mess=>{
+                let exampleEmbed = new Discord.MessageEmbed()
+                exampleEmbed.setImage("http://86.83.107.11:25565/TE_IMGINFO_MAZEINFO/"+message.author.id+"_mazeRun.png?"+Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
+                message.channel.send(exampleEmbed).then(async msgg=>{
+                   // await mess.delete()
+                    //":regional_indicator_x:  :arrow_up: :arrow_down: :arrow_left: :arrow_right: "
+                await msgg.react("⬆️")
+                await msgg.react("➡️")
+                await msgg.react("🚪")
+                await msgg.react("⬅️")
+                await msgg.react("⬇️")
+                
+                reactionLogCache.mazeMovementCache[msgg.id] = {userId:message.author.id,mazeName:maze}
+                })
+                
+           // })
+
+          //let msg = message.channel.send({files:[a],embed:exampleEmbed});
+        
 
         } else {
             return message.channel.send("invalid maze");
@@ -3393,7 +3425,190 @@ client.on("message", async (message) => {
 	}
 });
 
+client.on("messageReactionAdd",async(reactions,user)=>{
+   // console.log(reactions.emoji)
+    let isInListener = reactionLogCache.mazeMovementCache[reactions.message.id]
+    //console.log(reactionLogCache,user.id)
+    if(isInListener){
+        if(isInListener.userId === user.id){
 
+            let player = new Player(user.id);
+            let usableData = player.getData();
+            let maze = isInListener.mazeName;
+            let minstance = new MazeInstnace("RGM" + maze);
+            let mazeInstance = new Maze();
+            mazeInstance.insertExistingMaze(minstance.getMazeData())
+            let canvas = createCanvas(mazeInstance.size,mazeInstance.size)
+            let UserMazeData = usableData.data.dungeonLocationSystem["RGM" + maze]
+            //":regional_indicator_x:  :arrow_up: :arrow_down: :arrow_left: :arrow_right: "
+
+            // msgg.react("⬆️")
+            // msgg.react("⬇️")
+            // msgg.react("⬅️")
+            // msgg.react("➡️")
+            // msgg.react("🚪")
+
+            if(reactions.emoji.name == "⬅️"){
+                // reactions.remove()
+                // reactions.message.react("⬅️")
+                //let x = UserMazeData.rowNum - 1 //- 1;
+                //let y = UserMazeData.colNum// - 1;
+               // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
+               // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
+                //let locationX = (x * mazeInstance.size) / (mazeInstance.columns)
+                //let locationY = (y * mazeInstance.size) / (mazeInstance.columns)
+                let cantTravelTo = mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos);
+                let cantTravelToCheckOpposite = mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos - 1);
+                if(!cantTravelTo && !cantTravelToCheckOpposite){
+                    UserMazeData.userPos-=1;
+                    usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                    player.saveData(usableData);
+                } else {
+                    reactions.message.channel.send("you cannot move here.")
+                }
+            }
+
+            if(reactions.emoji.name == "➡️"){
+                // reactions.remove()
+                // reactions.message.react("➡️")
+                // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
+                // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
+                let cantTravelTo = mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos);
+                let cantTravelToCheckOpposite = mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos + 1);
+                if(!cantTravelTo && !cantTravelToCheckOpposite){
+                    UserMazeData.userPos+=1;
+                    usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                    player.saveData(usableData);
+                } else {
+                    reactions.message.channel.send("you cannot move here.")
+                }
+            
+            }
+
+            if(reactions.emoji.name == "⬆️"){
+                // reactions.remove()
+                // reactions.message.react("⬆️")
+                //let x = UserMazeData.rowNum - 1 //- 1;
+                //let y = UserMazeData.colNum// - 1;
+               // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
+               // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
+                //let locationX = (x * mazeInstance.size) / (mazeInstance.columns)
+                //let locationY = (y * mazeInstance.size) / (mazeInstance.columns)
+                let cantTravelTo = mazeInstance.drawInfo.hasTopWall.includes(UserMazeData.userPos);
+                let cantTravelToCheckOpposite = mazeInstance.drawInfo.hasBottomWall.includes(UserMazeData.userPos - mazeInstance.columns);
+                if(!cantTravelTo && !cantTravelToCheckOpposite && UserMazeData.userPos-mazeInstance.columns > -1){
+                    UserMazeData.userPos-=(mazeInstance.columns);
+                    usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                    player.saveData(usableData);
+                } else {
+                    reactions.message.channel.send("you cannot move here.")
+                }
+               
+            }
+
+            if(reactions.emoji.name == "⬇️"){
+                // reactions.remove()
+                // reactions.message.react("⬇️")
+           //     let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
+            //    let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
+            let cantTravelTo = mazeInstance.drawInfo.hasBottomWall.includes(UserMazeData.userPos);
+            let cantTravelToCheckOpposite = mazeInstance.drawInfo.hasTopWall.includes(UserMazeData.userPos + mazeInstance.columns);
+            if(!cantTravelTo && !cantTravelToCheckOpposite && UserMazeData.userPos+mazeInstance.columns < (mazeInstance.columns*mazeInstance.rows) + 1){
+                UserMazeData.userPos+=(mazeInstance.columns);
+                usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                player.saveData(usableData);
+            } else {
+                reactions.message.channel.send("you cannot move here.")
+            }
+                
+            }
+
+            if(reactions.emoji.name == "🚪"){
+                // reactions.remove()
+                // reactions.message.react("🚪")
+                if(UserMazeData.userPos == 0 || UserMazeData.userPos == (mazeInstance.size*2)){
+                    //let isInventoryChanged = false;
+                    for(let rooms in UserMazeData.foundItems){
+                        for(let items of UserMazeData.foundItems[rooms]){
+                       //     isInventoryChanged = true;
+                           let item = usableData.inventory.find(item=>item.Name == items.Name)
+                           if(item){
+                            let index = usableData.inventory.indexOf(item);
+                            usableData.inventory[index].Quantity += items.Quantity;
+
+                           } else {
+                            usableData.inventory.push(items);
+                           }
+                           reactions.message.channel.send(items.Quantity+ " " + items.Name + " added to your inventory.")
+                        }
+                        
+                    }
+                    // UserMazeData = {userPos:0,foundItems:{}}
+                    // usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
+                    // player.saveData(usableData);
+                    mazeInstance.drawInfo.playersInMaze.remove(message.author.id)
+                    minstance.setMazeData(mazeInstance);
+                    reactions.message.channel.send("you left the maze")
+                    return
+                } else {
+                    reactions.message.channel.send("you need to go to the exit to leave the maze.")
+                }
+            }
+           
+
+            mazeInstance.draw(canvas);
+            let playerColor
+            if(reactions.message.channel.type !== "dm"){
+            reactions.users.remove(user.id)
+            playerColor = reactions.message.guild.member(user).displayHexColor == "#000000" ? "#ffffff" : reactions.message.guild.member(user).displayHexColor;
+            }
+            else
+            playerColor = "#ffffff";
+
+            let i = UserMazeData.userPos % mazeInstance.columns;
+            let i2 = UserMazeData.userPos - i;
+            let solution = i2 / mazeInstance.columns;
+            let XPos = solution;
+            let YPos = UserMazeData.userPos - (mazeInstance.columns * XPos)
+            console.log(YPos,XPos)
+            mazeInstance.highlight({rowNum:XPos,colNum:YPos},mazeInstance.columns,playerColor,canvas.getContext("2d"), 5)
+            
+        //    let a = new Discord.MessageAttachment(canvas.toBuffer(),"maze.png");
+        // let a = new Discord.MessageAttachment(canvas.toBuffer(),"maze.png");
+        //   //  console.log(client.users.cache.get(client.user.id).dmChannel)
+        fs.writeFileSync(
+            "./images/mazeInfo/"+user.id+"_mazeRun.png",
+            canvas.toDataURL().replace(/^data:image\/png;base64,/, ""),
+            "base64"
+        );
+
+     //   message.channel.send(a).then(mess=>{
+            
+            
+        // const userReactions = reactions.message.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
+        // console.log(userReactions.values())
+        
+
+
+        let exampleEmbed = new Discord.MessageEmbed()
+       // reactions.message.edit(exampleEmbed)
+        exampleEmbed.setImage("http://86.83.107.11:25565/TE_IMGINFO_MAZEINFO/"+user.id+"_mazeRun.png?"+Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) 
+        reactions.message.edit(exampleEmbed)
+        // .then(()=>{
+        //     reactions.
+        // })
+        //.channel.send(a).then(mess=>{
+        //     let exampleEmbed = new Discord.MessageEmbed()
+        //     exampleEmbed.setImage(mess.attachments.array()[0].url)
+        //     reactions.message.edit(exampleEmbed)
+        //     mess.delete()
+        // })
+
+
+        }
+    }
+
+})
 
 function toFixed(num, precision) {
 	return (+(Math.round(+(num + "e" + precision)) + "e" + -precision)).toFixed(
