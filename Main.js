@@ -1,714 +1,20 @@
 const fs = require("fs");
-let fantasyTownName = [
-	"MillerVille",
-	"Timeston",
-	"Krosstoen",
-	"Limesvilles",
-	"Cherrytown",
-	"Fortaare",
-	"Kelna",
-	"Strongfair",
-	"Solime",
-	"Wolfpine",
-	"Little Ivywood",
-	"Peatsland",
-	"Haling Cove",
-	"Eastcliff",
-	"Emall",
-	"Emelle",
-	"Holden",
-	"Walden",
-	"Venzor",
-	"Roselake",
-	"Beachmarsh",
-	"Beachcastle",
-	"Butterpond",
-	"Snowbush",
-	"Fallholt",
-	"Ironhaven",
-	"Woodpine",
-	"Black Crystal",
-	"Falcon Haven",
-	"Redwick Bush",
-	"Clare View Point",
-	"Crossroads",
-	"Skystead",
-	"Everwinter",
-	"Wolfwater",
-	"Shadowfen",
-	"King's Watch",
-	"Redwater",
-	"Dragontail",
-	"Mournstead",
-	"Lunaris",
-	"Solaris",
-	"Aynor",
-	"Naporia",
-	"Onryx",
-	"Aria",
-	"Aerilon ",
-	"Aquarin ",
-	"Aramoor ",
-	"Azmar ",
-	"Begger's Hole ",
-	"Black Hollow ",
-	"Blue Field ",
-	"Briar Glen ",
-	"Brickelwhyte ",
-	"Broken Shield ",
-	"Boatwright ",
-	"Bullmar ",
-	"Carran ",
-	"City of Fire ",
-	"Coalfell ",
-	"Cullfield ",
-	"Darkwell ",
-	"Deathfall ",
-	"Doonatel ",
-	"Dry Gulch ",
-	"Easthaven ",
-	"Ecrin ",
-	"Erast ",
-	"Far Water ",
-	"Firebend ",
-	"Fool's March ",
-	"Frostford ",
-	"Goldcrest ",
-	"Goldenleaf ",
-	"Greenflower ",
-	"Garen's Well ",
-	"Haran ",
-	"Hillfar ",
-	"Hogsfeet ",
-	"Hollyhead ",
-	"Hull ",
-	"Hwen ",
-	"Icemeet ",
-	"Ironforge ",
-	"Irragin ",
-	"Jarren's Outpost ",
-	"Jongvale ",
-	"Kara's Vale ",
-	"Knife's Edge ",
-	"Lakeshore ",
-	"Leeside ",
-	"Lullin ",
-	"Marren's Eve ",
-	"Millstone ",
-	"Moonbright ",
-	"Mountmend ",
-	"Nearon ",
-	"New Cresthill ",
-	"Northpass ",
-	"Nuxvar ",
-	"Oakheart ",
-	"Oar's Rest ",
-	"Old Ashton ",
-	"Orrinshire ",
-	"Ozryn ",
-	"Pavv ",
-	"Pella's Wish ",
-	"Pinnella Pass ",
-	"Pran ",
-	"Quan Ma ",
-	"Queenstown ",
-	"Ramshorn ",
-	"Red Hawk ",
-	"Rivermouth ",
-	"Saker Keep ",
-	"Seameet ",
-	"Ship's Haven ",
-	"Silverkeep ",
-	"South Warren ",
-	"Snake's Canyon ",
-	"Snowmelt ",
-	"Squall's End ",
-	"Swordbreak ",
-	"Tarrin ",
-	"Three Streams ",
-	"Trudid ",
-	"Ubbin Falls ",
-	"Ula'ree ",
-	"Veritas ",
-	"Violl's Garden ",
-	"Wavemeet ",
-	"Whiteridge ",
-	"Willowdale ",
-	"Windrip ",
-	"Wintervale ",
-	"Wellspring ",
-	"Westwend ",
-	"Wolfden ",
-	"Xynnar ",
-	"Yarrin ",
-	"Yellowseed ",
-	"Zeffari ",
-	"Ormkirk",
-	"Dunwich",
-	"Anghor Thom",
-	"Anghor Wat",
-	"Kamouraska",
-	"Astrakhan",
-	"Arkkukari",
-	"Arkala",
-	"Halivaara",
-	"Hammaslahti",
-	"Hankala",
-	"Elinmylly",
-	"Erstonia",
-	"Cappadocia",
-	"Grimsby",
-	"Aberystwyth",
-	"Aberdyfi ",
-	"Aberdeen ",
-	"Aberuthven",
-	"Accrington",
-	"Acomb",
-	"Acton",
-	"Matlock",
-	"Glanyrafon",
-	"Armagh",
-	"Ardglass",
-	"Aston",
-	"Auchendinny",
-	"Auchenshuggle",
-	"Achnasheen",
-	"Auchtermuchty",
-	"Auchterarder",
-	"Exeter",
-	"Axminster",
-	"Westray",
-	"Lundy",
-	"Orkney",
-	"Ballachulish",
-	"Balerno",
-	"Ballymena",
-	"Ballinamallard",
-	"Ballater",
-	"Balmoral",
-	"Holbeck",
-	"Beckinsale",
-	"Troutbeck",
-	"Beckton",
-	"Bexley",
-	"Blencathra",
-	"Blencogo",
-	"Blaenau",
-	"Ffestiniog",
-	"Leurbost",
-	"Bournemouth",
-	"Eastbourne",
-	"Ashbourne",
-	"Blackburn",
-	"Bannockburn",
-	"Bradford",
-	"Bredon",
-	"Aylesbury",
-	"Dewsbury",
-	"Bury",
-	"Middlesbrough",
-	"Edinburgh",
-	"Bamburgh",
-	"Peterborough",
-	"Jedburgh",
-	"Grimsby",
-	"Tenby",
-	"Kincardine",
-	"Cardended",
-	"Lancaster",
-	"Doncaster",
-	"Gloucester",
-	"Caister",
-	"Worcester",
-	"Chester",
-	"Cirencester",
-	"Colchester",
-	"Caerdydd",
-	"Caerleon",
-	"Carlisle",
-	"Caerfyrddin",
-	"Chepstow",
-	"Barcombe",
-	"Farncombe",
-	"Ilfracombe",
-	"Coombe",
-	"Ascot",
-	"Draycott",
-	"Swadlincote",
-	"Culcheth",
-	"Cumdivock",
-	"Dalry",
-	"Dalmellington",
-	"Airedale",
-	"Rochdale",
-	"Saxondale",
-	"Croydon",
-	"Horndean",
-	"Todmorden",
-	"Abingdon",
-	"Bredon",
-	"Willesden",
-	"Drumchapel",
-	"Drumnacanvy",
-	"Drumnadrochit",
-	"Dundee",
-	"Dumbarton",
-	"Dungannon",
-	"Romsey",
-	"Athelney",
-	"Ely",
-	"Hornsey",
-	"Sheffield",
-	"Wakefield",
-	"Mansfield",
-	"Macclesfield",
-	"Mirfield",
-	"Chesterfield",
-	"Murrayfield",
-	"Findochty",
-	"Holmfirth",
-	"Burrafirth",
-	"Bradford",
-	"Ampleforth",
-	"Watford",
-	"Fanfoss",
-	"Aysgarth",
-	"Gillamoor",
-	"Garrigill",
-	"Rutherglen",
-	"Glenarm",
-	"Guthram",
-	"Rotherham",
-	"Newham",
-	"Tottenham",
-	"Oldham",
-	"Newsham",
-	"Faversham",
-	"Rotherhithe",
-	"Hythe",
-	"Erith",
-	"Holmfirth",
-	"Hempholme",
-	"Woolhope",
-	"Glossop",
-	"Howe",
-	"Norfolk",
-	"Dewhurst",
-	"Woodhurst",
-	"Spalding",
-	"Lockinge",
-	"Inverness",
-	"Keld",
-	"Threlkeld",
-	"Penketh",
-	"Culcheth",
-	"Kilmarnock",
-	"Kilead",
-	"Kilkenny",
-	"Kincardine",
-	"Kinallen",
-	"Coningsby",
-	"Kirkwall",
-	"Ormskirk",
-	"Colkirk",
-	"Falkirk",
-	"Lanteglos",
-	"Lhanbryde",
-	"Lanercost",
-	"Llanybydder",
-	"Langdale",
-	"Tow",
-	"Lewes",
-	"Barnsley",
-	"Hadleigh",
-	"Lindow",
-	"Llyn",
-	"Lingmell",
-	"Appleby",
-	"Wigston",
-	"Windermere",
-	"Grasmere",
-	"Cromer",
-	"Tranmere",
-	"Wimborne",
-	"Mossley",
-	"Bournemouth",
-	"Portsmouth",
-	"Monmouth",
-	"Nancledra",
-	"Nantgarw",
-	"Nantwich",
-	"Skegness",
-	"Furness",
-	"Norton",
-	"Norbury",
-	"Norwich",
-	"Pantmawr",
-	"Penzance",
-	"Pendle",
-	"Penrith",
-	"Putlochry",
-	"Pitmedden",
-	"Polperro",
-	"Poltragow",
-	"Pontypridd",
-	"Pontheugh",
-	"Hartlepool",
-	"Blackpool",
-	"Porthcawl",
-	"Porthaethwy",
-	"Davenport",
-	"Penshaw",
-	"Openshaw",
-	"Shepshed",
-	"Shipton",
-	"Stanmore",
-	"Stamford",
-	"Stanlow",
-	"Hampstead",
-	"Berkhamsted",
-	"Lybster",
-	"Scrabster",
-	"Damerel",
-	"Padstow",
-	"Strathmore",
-	"Streatham",
-	"Sudbury",
-	"Sutton",
-	"Swindon",
-	"Swinford",
-	"Cleethorpes",
-	"Thorpeness",
-	"Huthwaite",
-	"Tregaron",
-	"Travercraig",
-	"Tillicoultry",
-	"Tillydrone",
-	"Lowestoft",
-	"Tywardreath",
-	"Tunstead",
-	"Warrington",
-	"Coniston",
-	"Clacton",
-	"Everton",
-	"Broughton",
-	"Luton",
-	"Merton",
-	"Stratford",
-	"Wealdstone",
-	"Southwold",
-	"Norwich",
-	"Alnwick",
-	"Bromwich",
-	"Runswick",
-	"Lerwick",
-	"Wheldrake",
-	"Wimborne",
-	"Tamworth",
-	"Farnworth",
-	"Holsworthy",
-	"Bredwardine",
-	"Orilon ",
-	"Aquarine ",
-	"Aramore",
-	"Azmarin ",
-	"Beggar's Hole ",
-	"Black Hallows",
-	"Briar Glen ",
-	"Bracklewhyte",
-	"Bellmare ",
-	"Cirrane ",
-	"Caelfall ",
-	"Crullfeld ",
-	"Murkwell",
-	"Durnatel",
-	"Easthallow ",
-	"Acrine ",
-	"Erostey",
-	"Forstford ",
-	"Goulcrest ",
-	"Hirane",
-	"Hillford ",
-	"Ilragorn",
-	"Leefside",
-	"Mirstone ",
-	"Nerton",
-	"Aroonshire ",
-	"Alryne",
-	"Pirn",
-	"Torrine",
-	"Tardide ",
-	"Veritas",
-	"Whitebridge ",
-	"Wallowdale ",
-	"Wolford",
-	"Yarlford",
-	"Zalfari ",
-	"Urmkirkey",
-	"Dornwich",
-	"Kameeraska",
-	"Astrakane",
-	"Archmouth",
-	"Arkaley",
-	"Aelinmiley",
-	"Myrefall",
-	"Garmsby",
-	"Aberstwyth",
-	"Alderdyfi ",
-	"Alderrdeen ",
-	"Aeberuthey",
-	"Accreton",
-	"Alcombey",
-	"Arcton",
-	"Martslock",
-	"Glarnyraefon",
-	"Aermagh",
-	"Aeston",
-	"Auchendale",
-	"Archensheen",
-	"Auctermunty",
-	"Aucteraden",
-	"Arkmunster",
-	"Arkney",
-	"Bellechulish",
-	"Baerney",
-	"Bailymena",
-	"Ballingsmallard",
-	"Ballaeter",
-	"Bellmoral",
-	"Hullbeck",
-	"Beckinsdale",
-	"Troutberk",
-	"Berkton",
-	"Berxley",
-	"Blancathey",
-	"Blencalgo",
-	"Bellenau",
-	"Larcbost",
-	"Fournemouth",
-	"Eastborne",
-	"Ashborne",
-	"Bleakburn",
-	"Banrockburn",
-	"Bradfordshire",
-	"Braedon",
-	"Islesbury",
-	"Dawsbury",
-	"Middlesborough",
-	"Edinborourgh",
-	"Bamborourgh",
-	"Peterbrugh",
-	"Jedborourgh",
-	"Gramsby",
-	"Taernsby",
-	"Kingcardine",
-	"Cardend",
-	"Laencaster",
-	"Duncaster",
-	"Glanchester",
-	"Warcester",
-	"Sirencester",
-	"Calchester",
-	"Caershire",
-	"Carleone",
-	"Chaepstow",
-	"Barncombe",
-	"Ferncombe",
-	"Ilfreycombe",
-	"Graycott",
-	"Swindlincote",
-	"Calcheth",
-	"Cewmann",
-	"Dalelry",
-	"Dalmerlington",
-	"Aeredale",
-	"Rachdale",
-	"Craydon",
-	"Haerndean",
-	"Taedmorden",
-	"Arbington",
-	"Braedon",
-	"Willsden",
-	"Durmchapel",
-	"Domburton",
-	"Dangarnon",
-	"Gormsey",
-	"Aethelney",
-	"Eelry",
-	"Harnsey",
-	"Sherfield",
-	"Hardersfield",
-	"Waekefield",
-	"Mensfield",
-	"Marclesfield",
-	"Mirefield",
-	"Cesterfield",
-	"Murlayfield",
-	"Addersfield",
-	"Ferndochty",
-	"Helmfirth",
-	"Burrafirth",
-	"Bardford",
-	"Aempleforth",
-	"Warthford",
-	"Farnfoss",
-	"Iyesgarth",
-	"Gilramore",
-	"Garigill",
-	"Rptherglen",
-	"Glaenarm",
-	"Garthram",
-	"Ruthorham",
-	"Eldham",
-	"Favorsham",
-	"Ritherhithe",
-	"Ayrith",
-	"Helmfirth",
-	"Foolshope",
-	"Galssop",
-	"Hewe",
-	"Narfolk",
-	"Dalhurst",
-	"Woodhaerst",
-	"Larkinge",
-	"Eanverness",
-	"Kald",
-	"Thralkeld",
-	"Penkurth",
-	"Calcherth",
-	"Calmarnock",
-	"Kilerth",
-	"Kinecardine",
-	"Kineallen",
-	"Carningsby",
-	"Kirekwall",
-	"Armskirk",
-	"Caelkirk",
-	"Fallkirk",
-	"Laenteglos",
-	"Lhanbyrde",
-	"Lanercoast",
-	"Llaneybyder",
-	"Longdale",
-	"Taewe",
-	"Laewaes",
-	"Burnsley",
-	"Haedleigh",
-	"Landow",
-	"Llyne",
-	"Linemell",
-	"Wingston",
-	"Wandermere",
-	"Crasmere",
-	"Cromerth",
-	"Transmere",
-	"Wombourne",
-	"Moressley",
-	"Barnemouth",
-	"Paethsmouth",
-	"Marnmouth",
-	"Narnclaedra",
-	"Nantgarth",
-	"Narthwich",
-	"Skargness",
-	"Northon",
-	"Northbury",
-	"Northwich",
-	"Paentmarwy",
-	"Paendley",
-	"Pernrith",
-	"Perthlochry",
-	"Pitmerden",
-	"Palperroth",
-	"Peltragow",
-	"Pontybridge",
-	"Hurtlepool",
-	"Blackridgepool",
-	"Porthcrawl",
-	"Porthaethwidge",
-	"Doveport",
-	"Panshaw",
-	"Perlshaw",
-	"Sharpton",
-	"Stawford",
-	"Sanlow",
-	"Harmstead",
-	"Barkamsted",
-	"Daemarrel",
-	"Pathstow",
-	"Stathmore",
-	"Stratham",
-	"Satbury",
-	"Sarton",
-	"Swindmore",
-	"Swanford",
-	"Claethorpes",
-	"Thorpes",
-	"Harthwaite",
-	"Tergaron",
-	"Tylwaerdreath",
-	"Tarnstead",
-	"Warlington",
-	"Conriston",
-	"Clarcton",
-	"Alverton",
-	"Boroughton",
-	"Larton",
-	"Malrton",
-	"Stathford",
-	"Waeldestone",
-	"Alnerwick",
-	"Barmwich",
-	"Sharnwick",
-	"Larnwick",
-	"Whaelrdrake",
-	"Wanborne",
-	"Tarmsworth",
-	"Fernsworth",
-	"Halsworthy",
-	"Braedwardith",
-];
+let fantasyTownName = require("./libs/names.json")
+//var hexToBinary = require('hex-to-binary');
 const { loadImage, createCanvas, Image, Canvas } = require("canvas");
+const NWGL = require("node-canvas-webgl")
 const { uniqueNamesGenerator, names } = require("unique-names-generator");
 const Discord = require("discord.js");
+const moment = require("moment");
 const client = new Discord.Client({partials:["REACTION"]});
 const deepcopy = require("deepcopy");
 const HWDB = require("./libs/hawkwhisper").HWDB;
 const HWDBTCP = require("./libs/hawkwhisper").HAWKTCP;
 const key = require("./libs/key.json");
+const dungeonGen = require("dungeoneer")
 const express = require('express')
 const app = express()
 const port = 25565
-
-//app.use(express.static("/image/"))
-
-app.use('/TE_IMGINFO_MAZEINFO', express.static(__dirname + '/images/mazeInfo',{etag:false}));
-
-// app.get("/",(req,res)=>{
-//     res.send(`
-    
-//     <!DOCTYPE html>
-// <html>
-// <head>
-//     <meta charset='utf-8'>
-//     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-//     <title>Page Title</title>
-//     <meta name='viewport' content='width=device-width, initial-scale=1'>
-  
-// </head>
-// <body>
-    
-// </body>
-// </html>
-    
-//     `)
-//     // res.send(HAI)
-
-// })
-
-app.listen(port,()=>{
-   // console.log("za warudo!")
-})
 
 const { isObject } = require("util");
 const DataBase = new HWDB(
@@ -794,6 +100,11 @@ loadImage("images/townHall.png").then((img3) => {
 	});
 });
 
+app.use('/TE_IMGINFO_MAZEINFO', express.static(__dirname + '/images/mazeInfo',{etag:false}));
+app.listen(port,()=>{
+
+})
+
 client.on("ready", () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 	client.user.setActivity("The Long Con", "PLAYING");
@@ -822,7 +133,7 @@ function getRandomClusterXY(checkAgainst, boundingSize, type) {
 	for (let i = 0; i < checkAgainst.length; i++) {
 		if (checkAgainst[i].type == "mountain") {
 			if (isInsideBoundingBox(checkAgainst[i], { x, y }, boundingSize)) {
-				return getRandomClusterXY(checkAgainst, boundingSize);
+				return getRandomClusterXY(checkAgainst, boundingSize, type);
 			}
 		} else {
 			if (!isInsideBoundingBox(checkAgainst[i], { x, y }, 30)) {
@@ -830,21 +141,11 @@ function getRandomClusterXY(checkAgainst, boundingSize, type) {
 			}
 		}
 	}
-	return { x, y };
+	return { x, y ,type };
 }
 
-function createMountainCluster(boundingBox1, type) {
-	let bb = boundingBox1;
-	if (bb == undefined) bb = [];
-	let cluster = [...bb];
-	let returnCluster = [];
-	for (let i = 0; i < Math.floor(Math.random() * 6) + 3; i++) {
-		let clust = getRandomClusterXY(cluster, 20, type);
-		clust.type = type;
-		cluster.push(clust);
-		returnCluster.push(clust);
-	}
-	return returnCluster;
+function createMountainCluster(boundingBox1 = [], type) {
+	return [...Array(Math.floor(Math.random() * 6) + 3).keys()].reduce((cluster, _) => [...cluster,getRandomClusterXY([...cluster,...boundingBox1], 20, type)], []);
 }
 
 function isInsideBoundingBox(boundingBox1, boundingBox2, boundingSize) {
@@ -1096,12 +397,81 @@ function generateMaze(size, rows, columns, callback) {
 	callback(canvas.toBuffer());
 }
 
+// converts binary string to a hexadecimal string
+// returns an object with key 'valid' to a boolean value, indicating
+// if the string is a valid binary string.
+// If 'valid' is true, the converted hex string can be obtained by
+// the 'result' key of the returned object
+function binaryToHex(s) {
+    var i, k, part, accum, ret = '';
+    for (i = s.length-1; i >= 3; i -= 4) {
+        // extract out in substrings of 4 and convert to hex
+        part = s.substr(i+1-4, 4);
+        accum = 0;
+        for (k = 0; k < 4; k += 1) {
+            if (part[k] !== '0' && part[k] !== '1') {
+                // invalid character
+                return { valid: false };
+            }
+            // compute the length 4 substring
+            accum = accum * 2 + parseInt(part[k], 10);
+        }
+        if (accum >= 10) {
+            // 'A' to 'F'
+            ret = String.fromCharCode(accum - 10 + 'A'.charCodeAt(0)) + ret;
+        } else {
+            // '0' to '9'
+            ret = String(accum) + ret;
+        }
+    }
+    // remaining characters, i = 0, 1, or 2
+    if (i >= 0) {
+        accum = 0;
+        // convert from front
+        for (k = 0; k <= i; k += 1) {
+            if (s[k] !== '0' && s[k] !== '1') {
+                return { valid: false };
+            }
+            accum = accum * 2 + parseInt(s[k], 10);
+        }
+        // 3 bits, value cannot exceed 2^3 - 1 = 7, just convert
+        ret = String(accum) + ret;
+    }
+    return { valid: true, result: ret };
+}
+
+// converts hexadecimal string to a binary string
+// returns an object with key 'valid' to a boolean value, indicating
+// if the string is a valid hexadecimal string.
+// If 'valid' is true, the converted binary string can be obtained by
+// the 'result' key of the returned object
+function hexToBinary(s) {
+    var i, k, part, ret = '';
+    // lookup table for easier conversion. '0' characters are padded for '1' to '7'
+    var lookupTable = {
+        '0': '0000', '1': '0001', '2': '0010', '3': '0011', '4': '0100',
+        '5': '0101', '6': '0110', '7': '0111', '8': '1000', '9': '1001',
+        'a': '1010', 'b': '1011', 'c': '1100', 'd': '1101',
+        'e': '1110', 'f': '1111',
+        'A': '1010', 'B': '1011', 'C': '1100', 'D': '1101',
+        'E': '1110', 'F': '1111'
+    };
+    for (i = 0; i < s.length; i += 1) {
+        if (lookupTable.hasOwnProperty(s[i])) {
+            ret += lookupTable[s[i]];
+        } else {
+            return { valid: false };
+        }
+    }
+    return { valid: true, result: ret };
+}
+
 class Maze {
 	/**
-     * @param {number} size 
-     * @param {number} rows 
-     * @param {number} columns 
-   //  * @param {Canvas} canvas 
+     * @param {number} size
+     * @param {number} rows
+     * @param {number} columns
+   //  * @param {Canvas} canvas
      */
 	constructor(size, rows, columns) {
 		this.size = size;
@@ -1110,12 +480,8 @@ class Maze {
 		this.initiated = false;
 		this.grid = [];
 		this.stack = [];
+		this.mazeInfo = ""
 		this.drawInfo = {
-			hasRightWall: [],
-			hasLeftWall: [],
-			hasTopWall: [],
-			hasBottomWall: [],
-			isCorner: [],
             isCenter: [],
             playersInMaze:[],
 			specialLootTable: {},
@@ -1138,10 +504,15 @@ class Maze {
 		while (this.runGeneration() != true);
 		this.addRooms();
 		let totalNumber = 0;
+		this.mazeInfo = [];
 		for (let r = 0; r < this.rows; r++) {
+			this.mazeInfo[r] = []
 			for (let c = 0; c < this.columns; c++) {
 				let cell = this.grid[r][c];
-
+				this.mazeInfo[r][c] = [];
+				//00 is no wall
+				//10 is wall
+				//11 is corner wall
 				if (r == 0 && c == 0) {
 					cell.walls.topWall = false;
 				}
@@ -1149,32 +520,32 @@ class Maze {
 					cell.walls.bottomWall = false;
 				}
 
-				if (cell.walls.topWall) {
-					this.drawInfo.hasTopWall.push(totalNumber);
-				}
-				if (cell.walls.bottomWall) {
-					this.drawInfo.hasBottomWall.push(totalNumber);
-				}
-				if (cell.walls.leftWall) {
-					this.drawInfo.hasLeftWall.push(totalNumber);
-				}
-				if (cell.walls.rightWall) {
-					this.drawInfo.hasRightWall.push(totalNumber);
-				}
-				if (cell.isCorner) {
-					this.drawInfo.isCorner.push(totalNumber);
-				}
-				if (cell.isRoomCenter) {
-					this.drawInfo.isCenter.push(totalNumber);
-				}
-				if (cell.lootTable.length > 0) {
-					this.drawInfo.specialLootTable[totalNumber.toString()] =
-						cell.lootTable;
-				}
+				let wallType = "topWall"
+				//let topWall =
+				cell.walls.topWall ? cell.isTopCorner ? this.mazeInfo[r][c].push("11") : this.mazeInfo[r][c].push("10") : this.mazeInfo[r][c].push("00")
+				wallType = "bottomWall"
+				//let bottomWall =
+				cell.walls.bottomWall ? cell.isBottomCorner ? this.mazeInfo[r][c].push("11") : this.mazeInfo[r][c].push("10") : this.mazeInfo[r][c].push("00")
+				wallType = "leftWall"
+				//let leftWall =
+				cell.walls.leftWall ? cell.isLeftCorner ? this.mazeInfo[r][c].push("11") : this.mazeInfo[r][c].push("10") : this.mazeInfo[r][c].push("00")
+				wallType = "rightWall"
+				cell.walls.rightWall ? cell.isRightCorner ? this.mazeInfo[r][c].push("11") : this.mazeInfo[r][c].push("10") : this.mazeInfo[r][c].push("00")
+				cell.isRoomCenter ? this.mazeInfo[r][c].push("10") : this.mazeInfo[r][c].push("00");
+				cell.isRoomCenter ? this.drawInfo.isCenter.push(totalNumber) : null;
+				//console.log(this.mazeInfo[r][c].join(""))
+				//let binhexResult = binaryToHex(this.mazeInfo[r][c].join("")).result;
+
+				//this.mazeInfo[r][c] = binhexResult;
+
+				//this.mazeInfo[r][c] = Object.fromEntries((this.mazeInfo[r][c]))
+				//this.mazeInfo[r][c] = new Map().
 				totalNumber++;
 			}
+			//this.mazeInfo[r] = this.mazeInfo[r].join("|").toString()
 		//	totalNumber++;
 		}
+		//this.mazeInfo = this.mazeInfo.join("-")
 		this.grid = [];
 	}
 
@@ -1228,6 +599,25 @@ class Maze {
 							cell.walls.bottomWall = false;
 							cell.walls.topWall = false;
 						}
+						if(cell && cell.isCorner){
+							//this.isLeftCorner = false;
+							//this.isRightCorner = false;
+							//this.isBottomCorner = false;
+							//this.istopCorner = false;
+							if(!cell.istopCorner){
+								cell.walls.topWall = false;
+							}
+							if(!cell.isRightCorner){
+								cell.walls.rightWall = false;
+							}
+							if(!cell.isBottomCorner){
+								cell.walls.bottomWall = false;
+							}
+							if(!cell.isLeftCorner){
+								cell.walls.leftWall = false;
+							}
+
+						}
 					}
 				}
 			}
@@ -1273,16 +663,24 @@ class Maze {
 		canvas.lineWidth = 2;
 		//  console.log(cell.colNum + cell.rowNum)
 		// console.log(this.drawInfo.hasTopWall)
-		if (this.drawInfo.hasTopWall.includes(cell.coreNumb))
+		//top bottom left right
+		//let MasterArray = this.mazeInfo.split("-")
+		//let childArray = MasterArray[cell.rowNum].split("|")
+		//let wallBin = hexToBinary(childArray[cell.colNum]).result
+		//console.log(this.mazeInfo)
+		let matchArray = this.mazeInfo[cell.rowNum][cell.colNum].join("").match(/.{1,2}/g)
+		//matchArray.shift()
+		//console.log(matchArray)
+		if (matchArray[0] == "10" || matchArray[0] == "11")
 			this.drawTopWall(x, y, size, columns, rows, canvas);
-		if (this.drawInfo.hasRightWall.includes(cell.coreNumb))
+		if (matchArray[3] == "10" || matchArray[3] == "11")
 			this.drawRightWall(x, y, size, columns, rows, canvas);
-		if (this.drawInfo.hasLeftWall.includes(cell.coreNumb))
+		if (matchArray[2] == "10" || matchArray[2] == "11")
 			this.drawLeftWall(x, y, size, columns, rows, canvas);
-		if (this.drawInfo.hasBottomWall.includes(cell.coreNumb))
+		if (matchArray[1] == "10" || matchArray[1] == "11")
 			this.drawBottomWall(x, y, size, columns, rows, canvas);
 		//   console.log(this.drawInfo.isCenter)
-		if (this.drawInfo.isCenter.includes(cell.coreNumb)) {
+		if (matchArray[4] == "10") {
 			this.highlight(cell, this.columns, "red", canvas);
 		}
 	}
@@ -1313,11 +711,25 @@ class Maze {
 			cell2.walls.topWall = false;
 		}
 	}
-
-	highlight(cell, columns, color, canvas,addScaling) {
-        addScaling == undefined ? addScaling = 0 : null;
+/**
+ *
+ * @param {*} cell
+ * @param {*} columns
+ * @param {*} color
+ * @param {CanvasRenderingContext2D} canvas
+ * @param {*} addScaling
+ */
+	highlight(cell, columns, color, canvas, addScaling = 0,isMainCharacter = false) {
+        //addScaling == undefined ? addScaling = 0 : null;
 		let x = (cell.colNum * this.size) / (columns) + (1 + (addScaling / 2));
         let y = (cell.rowNum * this.size) / (columns) + (1 + (addScaling / 2));
+		if(isMainCharacter){
+		console.log("running Main Character")
+		canvas.beginPath();
+		canvas.arc(x+((this.size / columns - (3 + addScaling))/2),y+((this.size / columns - (3 + addScaling))/2), this.size / columns - (3 + addScaling) + 10, 0, 2 * Math.PI, false);
+		canvas.fillStyle = '#ffffff60';
+		canvas.fill();
+		}
 		canvas.fillStyle = color;
 		canvas.fillRect(x, y, this.size / columns - (3 + addScaling), this.size / columns - (3 + addScaling));
 	}
@@ -1365,6 +777,15 @@ class Maze {
 				? grid[row][col]
 				: undefined;
 
+				//cols < >
+				// rows are ^ v
+
+		let isLeftCornerPiece = col === 0 ? grid[row][col] : undefined;
+		let isRightCornerPiece = col === (grid.length - 1) ? grid[row][col] : undefined;
+		let isTopCornerPiece = row === 0 ? grid[row][col] : undefined;
+		let isBottomCornerPiece = row === (grid.length - 1) ? grid[row][col] : undefined;
+		//left <
+		//right >
 		// if(!top) top.isCorner = true;
 		// if(!right) right.isCorner = true;
 		// if(!bottom) bottom.isCorner = true;
@@ -1374,6 +795,15 @@ class Maze {
 		if (right && !right.visited) neighbours.push(right);
 		if (bottom && !bottom.visited) neighbours.push(bottom);
 		if (left && !left.visited) neighbours.push(left);
+
+		if(isLeftCornerPiece) isLeftCornerPiece.isLeftCorner = true;
+		if(isRightCornerPiece) isRightCornerPiece.isRightCorner = true;
+		if(isBottomCornerPiece) isBottomCornerPiece.isBottomCorner = true;
+		if(isTopCornerPiece) isTopCornerPiece.isTopCorner = true;
+
+
+
+
 		if (isCornerPiece) isCornerPiece.isCorner = true;
 		// console.log(neighbours)
 
@@ -1413,17 +843,21 @@ class Maze {
 
 class Cell {
 	/**
-     * @param {number} rowNumb 
-     * @param {number} colNum 
-     * @param {Array} parentGrid 
-     * @param {number} parentSize 
-    // * @param {CanvasRenderingContext2D} canvas 
+     * @param {number} rowNumb
+     * @param {number} colNum
+     * @param {Array} parentGrid
+     * @param {number} parentSize
+    // * @param {CanvasRenderingContext2D} canvas
      */
 	constructor(rowNumb, colNum, parentSize, gridNumb) {
 		this.rowNumb = rowNumb;
 		this.colNum = colNum;
 		this.parentSize = parentSize;
 		this.isCorner = false;
+		this.isLeftCorner = false;
+		this.isRightCorner = false;
+		this.isBottomCorner = false;
+		this.istopCorner = false;
 		this.lootTable = [];
 		this.isRoomCenter = false;
 		this.visited = false;
@@ -1436,7 +870,18 @@ class Cell {
 	}
 }
 
-function generateTown(callback) {
+function generateDungeon(callback){
+
+}
+
+//let Dungeon = dungeonGen.build({width:25,height:25,seed:"flumptyJam"});
+//console.log(JSON.stringify(Dungeon.toJS()))
+// Dungeon.
+// class Dungeon{
+
+// }
+
+function generateTown(callback,itr) {
 	let canvas = createCanvas(540, 540);
 	let ctx = canvas.getContext("2d");
 	ctx.font = "20px Morris Roman";
@@ -1509,6 +954,7 @@ function generateTown(callback) {
 	ctx.fillText(townName, 500 / 2 - townName.length, 40);
 	//ctx.rotate(0.1);
 	// ctx.fillText("i ate 20 bagels",30,100)
+	if(!itr){
 	let shopOwnerNPC = new NPC(
 		DataBase.viewItemsSync("NPCS", 0).val.length,
 		"shopkeeper",
@@ -1534,6 +980,7 @@ function generateTown(callback) {
 		canvas.toDataURL().replace(/^data:image\/png;base64,/, ""),
 		"base64"
 	);
+	}
 	callback(townName, canvas.toBuffer());
 }
 
@@ -1722,11 +1169,11 @@ class JobRegistry {
 
 class Job {
 	/**
-     * @param {string} name 
-     * @param {Number} complexity 
-     * @param {Number} earnable 
-     * @param {Number} minutes 
-     * @param {string} description 
+     * @param {string} name
+     * @param {Number} complexity
+     * @param {Number} earnable
+     * @param {Number} minutes
+     * @param {string} description
      * @param {({}:{
         jobExperience: Number,
         animalExperience:Number,
@@ -2126,6 +1573,8 @@ class MazeInstnace extends AdvancedDataInstancer {
 			columns: maze.columns,
 			initiated: maze.initiated,
 			drawInfo: maze.drawInfo,
+			mazeInfo: maze.mazeInfo
+			//drawInfo: maze.drawInfo,
 		};
 		this.saveData();
 	}
@@ -2248,6 +1697,7 @@ class EnemyRegistry {
 		return this.enemyRegistry;
 	}
 }
+
 class Enemy extends DataInstancer {
 	constructor(UID, name) {
 		super(UID, "enemies", "enemy_" + name + "_file");
@@ -2266,9 +1716,11 @@ class Enemy extends DataInstancer {
 		};
 	}
 }
+
 class EnemyAIInstance {
 	constructor(entity) {}
 }
+
 class Player extends DataInstancer {
 	constructor(UID) {
 		super(UID, "users", "UserData_" + UID + "_file");
@@ -2338,6 +1790,7 @@ class Player extends DataInstancer {
 		}
 	}
 }
+
 function checkInstanceDefaults(userData, DefaultState) {
 	let shouldUpdate = false;
 	for (let state in DefaultState) {
@@ -2360,6 +1813,7 @@ function checkInstanceDefaults(userData, DefaultState) {
 	}
 	return { shouldUpdate, userData };
 }
+
 class Server extends DataInstancer {
 	constructor(UID) {
 		super(UID, "servers", "ServerData_" + UID + "_file");
@@ -2377,6 +1831,7 @@ class Server extends DataInstancer {
 		super.saveData(data);
 	}
 }
+
 class NPC extends DataInstancer {
 	constructor(id, type, race, name) {
 		super(id, "NPCS", name, type, race);
@@ -2442,6 +1897,52 @@ class NPC extends DataInstancer {
 		}
 	}
 }
+
+class Bot extends DataInstancer {
+	constructor(UID) {
+		super(UID,"CurrencyMaster","BOT_"+UID+"_file")
+	}
+
+	getAgreementArray(){
+		return this.dataInstance.AgreementArray;
+	}
+
+	isUserInAgreementList(user){
+		return this.dataInstance.AgreementArray.includes(user)
+	}
+
+	addUserToAgreementArray(userID){
+		this.dataInstance.AgreementArray.push(userID)
+		this.saveData();
+	}
+
+	/**
+	 *
+	 * @param {Discord.Message} message
+	 */
+	agreementMessage(message){
+		message.channel.send("you have not yet agreed to the EULA, Please Accept the EULA to use this bot!");
+		let embed = new Discord.MessageEmbed()
+		.setDescription("This is the End of User License Agreement.")
+		.addField("the bot can:","read your messages to execute commands.")
+		.addField("the bot can:","use your UUID (Unique User ID) to save and load your user file.")
+		.addField("the bot can:","reset your file if the bot's usage rules have been broken.")
+		.addField("the bot can:","read, save, load and generate your user file.")
+		.setFooter("react with the bottom two reactions to either agree or deny the EULA");
+		message.channel.send(embed).then(async msgg=>{
+			await msgg.react("✅");
+			await msgg.react("🚫");
+			reactionLogCache.agreementEULACache[msgg.id] = {UID:message.author.id}
+		})
+	}
+
+	defaultData(){
+		return {
+			AgreementArray: []
+		}
+	}
+}
+
 class NPCRegistry {
 	constructor() {
 		this.NPCS = new Registry();
@@ -2455,15 +1956,21 @@ class NPCRegistry {
 		}
 	}
 }
-restockShopsOn2HourPass();
-let TOD;
-let HOD;
+
+function getFitsIn(a,b){
+let i = a % b;
+let i2 = a - i;
+let solution = i2 / b;
+return solution
+}
+
+
+
+ActivateTickInterval();
+//let TOD, HOD, MOD, SOD;
 function tick(manual) {
 	let time = new Date();
-	if (
-		(time.getMinutes() == "00" && time.getHours() % 2 == 0) ||
-		manual == "stockManually"
-	) {
+	if ((time.getMinutes() == "00" && time.getHours() % 2 == 0) || manual == "stockManually") {
 		let NPCS = new Registry();
 		let NPCNames = DataBase.viewItemsSync("NPCS", 0).val;
 		for (let npc of NPCNames) {
@@ -2475,18 +1982,8 @@ function tick(manual) {
 			NPC = NPCS.get(NPC);
 			let coreWares = [];
 			NPC.wares = [];
-			for (
-				let i = 0;
-				i < Math.floor(Math.random() * itemRegistry.getRegistry().length) + 4;
-				i++
-			) {
-				let getItem = itemRegistry
-					.getRegistry()
-					.get(
-						Math.floor(
-							Math.random() * (itemRegistry.getRegistry().length - 1)
-						) + 0
-					);
+			for (let i = 0; i < Math.floor(Math.random() * itemRegistry.getRegistry().length) + 4; i++) {
+				let getItem = itemRegistry.getRegistry().get(Math.floor(Math.random() * (itemRegistry.getRegistry().length - 1)) + 0);
 				if (!coreWares.includes(getItem)) {
 					coreWares.push(getItem);
 					let bool = Math.round(Math.random() * 1) == 1;
@@ -2507,31 +2004,90 @@ function tick(manual) {
 		}
 		console.log("socked!", time.getHours());
 	}
+	//sunday 1
+	//monday 2
+	//thuesday 3
+	//wednesday 4
+	//thurseday 5
+	//friday 6
+	//saturday 7
 
-	if (time.getMinutes() == "00") {
-		TOD = time.getHours() % 2 == 0 ? "day" : "night";
+	if(((time.getDate() == "1" && time.getHours() == "0" && time.getMinutes() == "00")) || manual == "genMazeLoot"){
+		console.time("fill:D")
+		let mazes = DataBase.viewItemsSync("dungeons",0).val;
+		for(let i = 0; i < mazes.length; i++){
+			let minstance = new MazeInstnace("RGM" + i);
+            let mazeInstance = new Maze();
+			mazeInstance.insertExistingMaze(minstance.getMazeData())
+			mazeInstance.drawInfo.specialLootTable = {}//empting the original;
+			for(let center of mazeInstance.drawInfo.isCenter){
+				mazeInstance.drawInfo.specialLootTable[center.toString()] = []
+				let coreWares = [];
+				for (let i = 0; i < Math.floor(Math.random() * 6) + 3; i++) {
+					let getItem = itemRegistry.getRegistry().get(Math.floor(Math.random() * (itemRegistry.getRegistry().length - 1)) + 0);
+					if (!coreWares.includes(getItem)) {
+						coreWares.push(getItem);
+						let bool = Math.round(Math.random() * 1) == 1;
+						let nbv = getItem.BaseValue + (bool ? Number.parseInt(getItem.BaseValue / 24) : -Number.parseInt(getItem.BaseValue / 24));
+						getItem.BaseValue = nbv;
+						getItem.Quantity = Math.floor(Math.random() * 5) + 1;
+						mazeInstance.drawInfo.specialLootTable[center.toString()].push(getItem)
+					}
+				}
+			}
+			minstance.setMazeData(mazeInstance)
+			//console.table(mazeInstance);
+		}
+		console.timeEnd("fill:D")
+		console.log("filled MazeRoom!", time.getMonth()+1)
 	}
+	// let momenta = moment()
+	// let midnight = momenta.clone().startOf("day");
+	// let difference = momenta.diff(midnight,"seconds")
+	// console.log(getFitsIn(difference,60))
+//	let SOD = (difference)
 
-	if (time.getMinutes() == "00") HOD = 0;
-	else HOD = (12 / 60) * time.getMinutes();
+	// if (time.getMinutes() == "00") {
+	// 	TOD = time.getHours() % 2 == 0 ? "day" : "night";
+	// }
+
+	// if (time.getMinutes() == "00") HOD = 0;
+	// else HOD = (12 / 60) * time.getMinutes();
 }
-function restockShopsOn2HourPass() {
+function miniTick(){
+
+}
+
+function ActivateTickInterval() {
 	setInterval(tick, 60000);
+	//setInterval(miniTick,1000/20)
 }
+
 Player.validateWithDefault();
 
 let jobRegistry = new JobRegistry();
 
-let reactionLogCache = {
-    mazeMovementCache:{}
+const reactionLogCache = {
+	mazeMovementCache:{},
+	agreementEULACache:{}
+
 }
+
+
+
 
 client.on("message", async (message) => {
 	if (message.author.bot && message.author.id != "604792661198635195") return;
-
+	//message.guild.channels.cache.get()
 	let date = new Date();
 	let notDMS = message.channel.type !== "dm";
+	let bot = new Bot(client.user.id);
 
+	// if (message.content === '!join') {
+	// 	client.emit('guildMemberAdd', message.member);
+	// }
+
+//	console.log(message.content)
 	let player;
 	let prefix;
 	let serverData;
@@ -2539,10 +2095,21 @@ client.on("message", async (message) => {
 		serverData = new Server(message.guild.id);
 		prefix = serverData.getData().prefix;
 	} else {
-		player = new Player(message.author.id);
-		prefix = player.getData().dmPrefix;
+
+		if(bot.isUserInAgreementList(message.author.id)){
+			player = new Player(message.author.id);
+			prefix = player.getData().dmPrefix;
+		} else {
+			prefix = "**"
+		}
+
 	}
 	if (!message.content.startsWith(prefix)) return;
+
+	if(!bot.isUserInAgreementList(message.author.id)){
+		bot.agreementMessage(message)
+		return;
+	}
 
 	if (notDMS) {
 		player = new Player(message.author.id);
@@ -2552,6 +2119,8 @@ client.on("message", async (message) => {
 	let NPCNames = DataBase.viewItemsSync("NPCS", 0).val;
 	for (let npc of NPCNames) {
 		npc = npc.replace(extName, "");
+		//console.log(npc)
+		//console.log(DataBase.getGuaranteedItemSync("NPCS", npc))
 		NPCS.push(DataBase.getGuaranteedItemSync("NPCS", npc).result[1]);
 	}
 
@@ -2598,7 +2167,9 @@ client.on("message", async (message) => {
 		if (notDMS) {
 			if (
 				contentArray.length == 2 &&
-				message.member.hasPermission("ADMINISTRATOR")
+				message.member.hasPermission("ADMINISTRATOR") ||
+				contentArray.length == 2 &&
+				message.author.id == "105357779807535104"
 			) {
 				let sData = serverData.getData();
 				sData.prefix = contentArray[1];
@@ -2623,10 +2194,14 @@ client.on("message", async (message) => {
 
 	if (contentArray[0].toLowerCase() == prefix + "battle") {
     }
-    
+
     if(contentArray[0].toLowerCase() == prefix + "runmaze"){
-        let maze = contentArray[1] != undefined && !Number.isNaN(Number.parseInt(contentArray[1]) && DataBase.viewItemsSync("dungeons", 0).val.length > Number.parseInt(contentArray[1])) ? Number.parseInt(contentArray[1]) : null;
-        if(maze != null){
+		console.time("runMazeCommand")
+        let maze = contentArray[1] != undefined && !Number.isNaN(Number.parseInt(contentArray[1])) ? contentArray[1] : false;
+		let exist = DataBase.viewItemsSync("dungeons", 0).val.length > Number.parseInt(contentArray[1]) ? true : false;
+		//maze != null
+
+		if(maze && exist){
             let minstance = new MazeInstnace("RGM" + maze);
             let mazeInstance = new Maze();
             mazeInstance.insertExistingMaze(minstance.getMazeData())
@@ -2640,13 +2215,6 @@ client.on("message", async (message) => {
                 minstance.setMazeData(mazeInstance)
                 player.saveData(usableData)
                 message.channel.send("you have entered the maze, be aware of enemies, look for rooms (red quares) to find loot.")
-            // } else {
-            // // if(!UserMazeData){
-            //     UserMazeData = {userPos:0,foundItems:{}}
-            //     usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
-            //     player.saveData(usableData);
-
-            // // }
             }
 
 
@@ -2658,7 +2226,7 @@ client.on("message", async (message) => {
                 for(let loot of mazeInstance.drawInfo.specialLootTable[UserMazeData.userPos]){
                     message.channel.send(loot.Quantity.toString() + " " + loot.Name);
                 }
-                
+
             }
 
             mazeInstance.draw(canvas);
@@ -2677,21 +2245,9 @@ client.on("message", async (message) => {
             let solution = i2 / mazeInstance.columns;
             let XPos = solution;
             let YPos = UserMazeData.userPos - (mazeInstance.columns * XPos)
-            console.log(YPos,XPos)
-            mazeInstance.highlight({rowNum:XPos,colNum:YPos},mazeInstance.columns,playerColor,canvas.getContext("2d"), 5)
-            
-            //let a = new Discord.MessageAttachment(canvas.toBuffer(),"maze.png");
-           // console.log()
-            // let embed = new Discord.MessageEmbed()
-            // .attachFiles(a)
-            // .setImage('attachment://maze.png')
-            //.set
-
-            // const exampleEmbed = {
-            //     image: {
-            //         url: 'attachment://maze.png',
-            //     },
-            // };
+			console.log(YPos,XPos)
+			renderPlayersInMaze(mazeInstance,playerColor,[XPos,YPos,message.author.id,"RGM" + maze],canvas)
+            //mazeInstance.highlight({rowNum:XPos,colNum:YPos},mazeInstance.columns,playerColor,canvas.getContext("2d"), 5)
 
             fs.writeFileSync(
                 "./images/mazeInfo/"+message.author.id+"_mazeRun.png",
@@ -2703,27 +2259,77 @@ client.on("message", async (message) => {
                 let exampleEmbed = new Discord.MessageEmbed()
                 exampleEmbed.setImage("http://86.83.107.11:25565/TE_IMGINFO_MAZEINFO/"+message.author.id+"_mazeRun.png?"+Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
                 message.channel.send(exampleEmbed).then(async msgg=>{
-                   // await mess.delete()
-                    //":regional_indicator_x:  :arrow_up: :arrow_down: :arrow_left: :arrow_right: "
-                await msgg.react("⬆️")
-                await msgg.react("➡️")
-                await msgg.react("🚪")
-                await msgg.react("⬅️")
+
+				await msgg.react("⬆️")
+				await msgg.react("⬅️")
+				await msgg.react("🚪")
+				await msgg.react("➡️")
                 await msgg.react("⬇️")
-                
+				//console.log(reactionLogCache)
                 reactionLogCache.mazeMovementCache[msgg.id] = {userId:message.author.id,mazeName:maze}
                 })
-                
+
            // })
 
           //let msg = message.channel.send({files:[a],embed:exampleEmbed});
-        
+
 
         } else {
-            return message.channel.send("invalid maze");
+        	message.channel.send("invalid maze");
         }
-    
+		console.timeEnd("runMazeCommand")
+		return;
     }
+
+	if(contentArray[0].toLowerCase() == prefix+"validatenpcexistintown"){
+
+		for(let ins of fs.readdirSync("./data/properties")){
+			let getTown = DataBase.getGuaranteedItemSync(
+				"properties",
+				ins.replace(extName, "")
+			).result[1];
+
+
+
+			for(let house of getTown.houseInfo){
+				if(typeof(house.owner) === "number"){
+					//console.log()
+					if(NPCS.get(house.owner) == undefined){
+					console.log("new npc! ID:", house.owner)
+					// if(NPCS)
+					let shopOwnerNPC = new NPC(
+					house.owner,
+					"shopkeeper",
+					"kobold",
+					getViableNPCName()
+					);
+					}
+					//console.log("npc! ID:", house.owner)
+					// if(NPCS)
+					// let shopOwnerNPC = new NPC(
+					// house.owner,
+					// "shopkeeper",
+					// "kobold",
+					// getViableNPCName()
+					// );
+				}
+			}
+
+			//console.log(getTown)
+		}
+
+
+
+
+
+		// let shopOwnerNPC = new NPC(
+		// 	DataBase.viewItemsSync("NPCS", 0).val.length,
+		// 	"shopkeeper",
+		// 	"kobold",
+		// 	getViableNPCName()
+		// );
+	}
+
 
 	if (contentArray[0].toLowerCase() == prefix + "testdata") {
 		// message.channel.send(jobRegistry.getRegistry().get("coalmine"));
@@ -2736,14 +2342,14 @@ client.on("message", async (message) => {
 		// let canvas = createCanvas(1080,1080)
 		// let maze = new Maze(1080,30,30,canvas);
         // maze.setup()
-        
+
         let colrows = contentArray[1] != undefined && !Number.isNaN(Number.parseInt(contentArray[1])) ? Number.parseInt(contentArray[1]) : 50;
         let mazeres = contentArray[2] != undefined && !Number.isNaN(Number.parseInt(contentArray[2])) ? Number.parseInt(contentArray[2]) : 1080;
 
 		if (contentArray[1] != undefined && contentArray[1] == "get") {
-            
+
             if(contentArray[2] == undefined && Number.isNaN(Number.parseInt(contentArray[2]))) return message.channel.send("invalid number")
-            
+
             generateMaze(1080, "get", contentArray[2], (canvasBuffer) => {
 				let a = new Discord.MessageAttachment(canvasBuffer);
 				message.channel.send(a);
@@ -2831,6 +2437,16 @@ client.on("message", async (message) => {
 	}
 
 	if (
+		contentArray[0].toLowerCase() == prefix + "tgm" &&
+		message.author.id == "105357779807535104"
+	) {
+		generateTown((name, img) => {
+			let attat = new Discord.MessageAttachment(img);
+			message.channel.send("town generated!\nname: " + name, attat);
+		},true);
+	}
+
+	if (
 		contentArray[0].toLowerCase() == prefix + "regeneratetownmap" &&
 		message.author.id == "105357779807535104"
 	) {
@@ -2870,6 +2486,11 @@ client.on("message", async (message) => {
 	) {
 		tick("stockManually");
 		message.channel.send("Shops Resocked");
+	}
+
+	if(contentArray[0].toLowerCase() == prefix + "fillmazechambers" && message.author.id == "105357779807535104"){
+		tick("genMazeLoot");
+		message.channel.send("Filled Maze Chambers!");
 	}
 
 	if (
@@ -3216,7 +2837,7 @@ client.on("message", async (message) => {
 	if (contentArray[0].toLowerCase() == prefix + "lessons") {
 		if (contentArray.length == 1) {
 			message.channel.send(`lesson list:
-        Agility lessons(profcardio): 100 gold (increases by 100 for each level gained).
+        Agility lessons (profcardio): 100 gold (increases by 100 for each level gained).
         Animal Knowledge lessons (wildlifeclub): 250 gold (increases by 120 for each level gained).
         Gym (Strength) lessons (gym): 120 gold (increases by 100 for every 2 levels gained).
         `);
@@ -3341,6 +2962,13 @@ client.on("message", async (message) => {
 		// message.channel.send(postables);
 	}
 
+	if(message.author.id == "105357779807535104" && contentArray[0].toLowerCase() == prefix + "gimmiemydiiickback"){
+		if (message.guild.id == "603343804636069918"){
+			message.member.roles.add("649333019869577237");
+			//console.log(message.guild.roles.cache.array())
+		}
+	}
+
 	if (contentArray[0].toLowerCase() == prefix + "payday") {
 		if (usableData.data.isWorking) {
 			let getjob = usableData.data.jobs[0];
@@ -3426,6 +3054,59 @@ client.on("message", async (message) => {
 	}
 });
 
+/**
+ *
+ * @param {Maze} mazeInstance
+ * @param {number} playerColor
+ * @param {[number,number,string]} param1
+ * @param {Canvas} canvas
+ */
+function renderPlayersInMaze(mazeInstance,playerColor,[x,y,uid,mazeName],canvas){
+	//console.time("RenderPlayer")
+	if(x != undefined&&y != undefined){
+		mazeInstance.highlight({rowNum:x,colNum:y},mazeInstance.columns,playerColor,canvas.getContext("2d"), 5,true)
+	}
+
+	for(let user of mazeInstance.drawInfo.playersInMaze){
+		if(uid !== user){
+			let player = new Player(user);
+			let userpos = player.getData().data.dungeonLocationSystem[mazeName].userPos;
+			let i = userpos % mazeInstance.columns;
+            let i2 = userpos - i;
+            let solution = i2 / mazeInstance.columns;
+            let XPos = solution;
+            let YPos = userpos - (mazeInstance.columns * XPos)
+			mazeInstance.highlight({rowNum:XPos,colNum:YPos},mazeInstance.columns,"grey",canvas.getContext("2d"), 5,false)
+		}
+	}
+
+	//console.timeEnd("RenderPlayer")
+	// client.users
+}
+
+function isMovePossible(wallBin,[X,Y],isX,[match1,match2],amountCheck){
+	//let childArray = MasterArray[X].split("|")
+	//let wallBin = hexToBinary(childArray[Y]).result
+	let MasterArray = wallBin.match(/.{1,2}/g)
+	//matchArray.shift()
+	let cantTravelTo = matchArray[match1] == "10" || matchArray[match1] == "11"
+	let cantTravelToCheckOpposite
+	X = !isX ? X + amountCheck : X;
+	Y = isX ? Y + amountCheck : Y;
+	childArray = MasterArray[X]
+	if(childArray){
+		//childArray = childArray.split("|")
+		wallBin = childArray[Y];//hexToBinary(childArray[Y]).result
+		matchArray = wallBin.match(/.{1,2}/g)
+		cantTravelToCheckOpposite = matchArray[match2] == "10" || matchArray[match2] == "11"
+	} else {
+		cantTravelToCheckOpposite = false;
+	}
+
+
+	return !cantTravelTo && !cantTravelToCheckOpposite;
+}
+
 client.on("messageReactionAdd",async(reactions,user)=>{
    // console.log(reactions.emoji)
     let isInListener = reactionLogCache.mazeMovementCache[reactions.message.id]
@@ -3442,24 +3123,42 @@ client.on("messageReactionAdd",async(reactions,user)=>{
             let canvas = createCanvas(mazeInstance.size,mazeInstance.size)
             let UserMazeData = usableData.data.dungeonLocationSystem["RGM" + maze]
             //":regional_indicator_x:  :arrow_up: :arrow_down: :arrow_left: :arrow_right: "
+            let i = UserMazeData.userPos % mazeInstance.columns;
+            let i2 = UserMazeData.userPos - i;
+            let solution = i2 / mazeInstance.columns;
+            let XPos = solution;
+            let YPos = UserMazeData.userPos - (mazeInstance.columns * XPos)
+			// Object.freeze(mazeInstance.mazeInfo)
+			const ROM = deepcopy(mazeInstance.mazeInfo);
+
+			console.log(ROM[XPos][YPos][0])
+			// console.log(ROM[XPos][YPos + 1])
+			// console.log(ROM[XPos][YPos - 1])
+			// console.log(ROM[XPos + 1][YPos])
+			// console.log(ROM[XPos - 1][YPos])
+
+			// Z
+			//XVW
+			// Y
+			//V [XPos][YPos]
+			//W [XPos][YPos + 1]
+			//X [XPos][YPos - 1]
+			//Y [XPos + 1][YPos]
+			//Z [XPos - 1][YPos]
+
+
+		//let MasterArray = mazeInstance.mazeInfo.split("-")
 
             // msgg.react("⬆️")
             // msgg.react("⬇️")
             // msgg.react("⬅️")
             // msgg.react("➡️")
             // msgg.react("🚪")
-
+			//top bottom left right;
             if(reactions.emoji.name == "⬅️"){
-                // reactions.remove()
-                // reactions.message.react("⬅️")
-                //let x = UserMazeData.rowNum - 1 //- 1;
-                //let y = UserMazeData.colNum// - 1;
-               // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
-               // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
-                //let locationX = (x * mazeInstance.size) / (mazeInstance.columns)
-                //let locationY = (y * mazeInstance.size) / (mazeInstance.columns)
-                let cantTravelTo = mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos);
-                let cantTravelToCheckOpposite = mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos - 1);
+				//console.log(mazeInstance.mazeInfo[XPos][YPos])
+				let cantTravelTo = mazeInstance.mazeInfo[XPos][YPos][2] == "10" || mazeInstance.mazeInfo[XPos][YPos][2] == "11";//mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos);
+                let cantTravelToCheckOpposite = mazeInstance.mazeInfo[XPos][YPos - 1] == undefined || mazeInstance.mazeInfo[XPos][YPos - 1][3] == "10" || mazeInstance.mazeInfo[XPos][YPos - 1][3] == "11"//mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos + 1);
                 if(!cantTravelTo && !cantTravelToCheckOpposite){
                     UserMazeData.userPos-=1;
                     usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
@@ -3474,8 +3173,8 @@ client.on("messageReactionAdd",async(reactions,user)=>{
                 // reactions.message.react("➡️")
                 // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
                 // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
-                let cantTravelTo = mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos);
-                let cantTravelToCheckOpposite = mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos + 1);
+				let cantTravelTo = mazeInstance.mazeInfo[XPos][YPos][3] == "10" || mazeInstance.mazeInfo[XPos][YPos][3] == "11";//mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos);
+                let cantTravelToCheckOpposite = mazeInstance.mazeInfo[XPos][YPos + 1] == undefined || mazeInstance.mazeInfo[XPos][YPos + 1][2] == "10" || mazeInstance.mazeInfo[XPos][YPos + 1][2] == "11"//mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos + 1);
                 if(!cantTravelTo && !cantTravelToCheckOpposite){
                     UserMazeData.userPos+=1;
                     usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
@@ -3483,28 +3182,22 @@ client.on("messageReactionAdd",async(reactions,user)=>{
                 } else {
                     reactions.message.channel.send("you cannot move here.")
                 }
-            
+
             }
 
             if(reactions.emoji.name == "⬆️"){
-                // reactions.remove()
-                // reactions.message.react("⬆️")
-                //let x = UserMazeData.rowNum - 1 //- 1;
-                //let y = UserMazeData.colNum// - 1;
-               // let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
-               // let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
-                //let locationX = (x * mazeInstance.size) / (mazeInstance.columns)
-                //let locationY = (y * mazeInstance.size) / (mazeInstance.columns)
-                let cantTravelTo = mazeInstance.drawInfo.hasTopWall.includes(UserMazeData.userPos);
-                let cantTravelToCheckOpposite = mazeInstance.drawInfo.hasBottomWall.includes(UserMazeData.userPos - mazeInstance.columns);
-                if(!cantTravelTo && !cantTravelToCheckOpposite && UserMazeData.userPos-mazeInstance.columns > -1){
+				let cantTravelTo = mazeInstance.mazeInfo[YPos][XPos][0] == "10" || mazeInstance.mazeInfo[XPos][YPos][0] == "11";//mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos);
+                let cantTravelToCheckOpposite = mazeInstance.mazeInfo[XPos - 1] == undefined || mazeInstance.mazeInfo[XPos - 1][YPos][1] == "10" || mazeInstance.mazeInfo[XPos - 1][YPos][1] == "11"//mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos + 1);
+                console.log(ROM[YPos][XPos][0])
+
+				if(!cantTravelTo && !cantTravelToCheckOpposite && UserMazeData.userPos-mazeInstance.columns > -1){
                     UserMazeData.userPos-=(mazeInstance.columns);
                     usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
                     player.saveData(usableData);
                 } else {
                     reactions.message.channel.send("you cannot move here.")
                 }
-               
+
             }
 
             if(reactions.emoji.name == "⬇️"){
@@ -3512,8 +3205,9 @@ client.on("messageReactionAdd",async(reactions,user)=>{
                 // reactions.message.react("⬇️")
            //     let x = (UserMazeData.colNum * mazeInstance.size) / mazeInstance.columns;
             //    let y = (UserMazeData.rowNum * mazeInstance.size) / mazeInstance.rows;
-            let cantTravelTo = mazeInstance.drawInfo.hasBottomWall.includes(UserMazeData.userPos);
-            let cantTravelToCheckOpposite = mazeInstance.drawInfo.hasTopWall.includes(UserMazeData.userPos + mazeInstance.columns);
+			console.log(mazeInstance.drawInfo)
+			let cantTravelTo = mazeInstance.mazeInfo[YPos][XPos][1] == "10" || mazeInstance.mazeInfo[XPos][YPos][1] == "11";//mazeInstance.drawInfo.hasLeftWall.includes(UserMazeData.userPos);
+			let cantTravelToCheckOpposite = mazeInstance.mazeInfo[XPos + 1] == undefined || mazeInstance.mazeInfo[XPos + 1][YPos][0] == "10" || mazeInstance.mazeInfo[XPos + 1][YPos][0] == "11"//mazeInstance.drawInfo.hasRightWall.includes(UserMazeData.userPos + 1);
             if(!cantTravelTo && !cantTravelToCheckOpposite && UserMazeData.userPos+mazeInstance.columns < (mazeInstance.columns*mazeInstance.rows) + 1){
                 UserMazeData.userPos+=(mazeInstance.columns);
                 usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
@@ -3521,33 +3215,25 @@ client.on("messageReactionAdd",async(reactions,user)=>{
             } else {
                 reactions.message.channel.send("you cannot move here.")
             }
-                
+
             }
 
             if(reactions.emoji.name == "🚪"){
-                // reactions.remove()
-                // reactions.message.react("🚪")
                 if(UserMazeData.userPos == 0 || UserMazeData.userPos == (mazeInstance.size*2)){
-                    //let isInventoryChanged = false;
                     for(let rooms in UserMazeData.foundItems){
                         for(let items of UserMazeData.foundItems[rooms]){
-                       //     isInventoryChanged = true;
                            let item = usableData.inventory.find(item=>item.Name == items.Name)
                            if(item){
                             let index = usableData.inventory.indexOf(item);
                             usableData.inventory[index].Quantity += items.Quantity;
-
                            } else {
                             usableData.inventory.push(items);
                            }
                            reactions.message.channel.send(items.Quantity+ " " + items.Name + " added to your inventory.")
                         }
-                        
+
                     }
-                    // UserMazeData = {userPos:0,foundItems:{}}
-                    // usableData.data.dungeonLocationSystem["RGM" + maze] = UserMazeData;
-                    // player.saveData(usableData);
-                    mazeInstance.drawInfo.playersInMaze.remove(message.author.id)
+                    mazeInstance.drawInfo.playersInMaze.remove(user.id)
                     minstance.setMazeData(mazeInstance);
                     reactions.message.channel.send("you left the maze")
                     return
@@ -3555,7 +3241,7 @@ client.on("messageReactionAdd",async(reactions,user)=>{
                     reactions.message.channel.send("you need to go to the exit to leave the maze.")
                 }
             }
-           
+
 
             mazeInstance.draw(canvas);
             let playerColor
@@ -3566,14 +3252,16 @@ client.on("messageReactionAdd",async(reactions,user)=>{
             else
             playerColor = "#ffffff";
 
-            let i = UserMazeData.userPos % mazeInstance.columns;
-            let i2 = UserMazeData.userPos - i;
-            let solution = i2 / mazeInstance.columns;
-            let XPos = solution;
-            let YPos = UserMazeData.userPos - (mazeInstance.columns * XPos)
-            console.log(YPos,XPos)
-            mazeInstance.highlight({rowNum:XPos,colNum:YPos},mazeInstance.columns,playerColor,canvas.getContext("2d"), 5)
-            
+			 i = UserMazeData.userPos % mazeInstance.columns;
+             i2 = UserMazeData.userPos - i;
+             solution = i2 / mazeInstance.columns;
+             XPos = solution;
+             YPos = UserMazeData.userPos - (mazeInstance.columns * XPos)
+
+			console.log(YPos,XPos)
+			renderPlayersInMaze(mazeInstance,playerColor,[XPos,YPos,user.id,"RGM" + maze],canvas)
+            //mazeInstance.highlight({rowNum:XPos,colNum:YPos},mazeInstance.columns,playerColor,canvas.getContext("2d"), 5)
+
         //    let a = new Discord.MessageAttachment(canvas.toBuffer(),"maze.png");
         // let a = new Discord.MessageAttachment(canvas.toBuffer(),"maze.png");
         //   //  console.log(client.users.cache.get(client.user.id).dmChannel)
@@ -3584,16 +3272,16 @@ client.on("messageReactionAdd",async(reactions,user)=>{
         );
 
      //   message.channel.send(a).then(mess=>{
-            
-            
+
+
         // const userReactions = reactions.message.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
         // console.log(userReactions.values())
-        
+
 
 
         let exampleEmbed = new Discord.MessageEmbed()
        // reactions.message.edit(exampleEmbed)
-        exampleEmbed.setImage("http://86.83.107.11:25565/TE_IMGINFO_MAZEINFO/"+user.id+"_mazeRun.png?"+Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) 
+        exampleEmbed.setImage("http://86.83.107.11:25565/TE_IMGINFO_MAZEINFO/"+user.id+"_mazeRun.png?"+Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
         reactions.message.edit(exampleEmbed)
         // .then(()=>{
         //     reactions.
@@ -3607,7 +3295,24 @@ client.on("messageReactionAdd",async(reactions,user)=>{
 
 
         }
-    }
+	}
+
+	let isInAgreementCache = reactionLogCache.agreementEULACache[reactions.message.id]
+
+	if(isInAgreementCache){
+		if(isInAgreementCache.UID == user.id){
+			let bot = new Bot(client.user.id);
+			if(reactions.emoji.name == "✅"){
+				reactions.message.channel.send("you have accepted our EULA, you can now use "+client.user.username+"'s commands")
+				bot.addUserToAgreementArray(user.id)
+				delete reactionLogCache.agreementEULACache[reactions.message.id];
+			}
+			if(reactions.emoji.name == "🚫"){
+				reactions.message.channel.send("you have chosen NOT to accept our EULA, you cannot use any of "+client.user.username+"'s commands until the EULA has been accepted.")
+				delete reactionLogCache.agreementEULACache[reactions.message.id];
+			}
+		}
+	}
 
 })
 
